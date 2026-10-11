@@ -60,6 +60,7 @@ Add these in Vercel project settings:
 | Variable | Exposure | Purpose |
 | --- | --- | --- |
 | NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID | Browser | WalletConnect support |
+| NEXT_PUBLIC_MONAD_RPC_URL | Browser | Monad testnet RPC for wallet reads |
 | NEXT_PUBLIC_CREDIT_MARKET_ADDRESS | Browser | Monad CreditMarket reads and transactions |
 | NEXT_PUBLIC_MOCK_USDC_ADDRESS | Browser | Test USDC reads and approvals |
 | CREDIT_MARKET_ADDRESS | Server | Contract address used to read nonces and repayment history |
