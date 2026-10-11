@@ -40,7 +40,7 @@ export function LoanRow({ loan, action }: { loan: LoanRecord; action?: React.Rea
 }
 
 export function shortAddress(address?: string) {
-  if (!address || address === "0x0000000000000000000000000000000000000000") return "—";
+  if (!address || address === "0x0000000000000000000000000000000000000000") return "Unavailable";
   return address.slice(0, 6) + "…" + address.slice(-4);
 }
 

@@ -45,7 +45,7 @@ export function WalletTools() {
     <div className="wallet-tools">
       <div className="wallet-balance">
         <span className="balance-icon"><Droplets size={16} /></span>
-        <div><span>Test token balance</span><strong>{balance.data === undefined ? "—" : Number(formatUnits(balance.data, 6)).toLocaleString("en-US", { maximumFractionDigits: 2 }) + " mUSDC"}</strong></div>
+        <div><span>Test token balance</span><strong>{balance.data === undefined ? (!mockUsdcAddress ? "Not configured" : balance.isLoading ? "Loading" : "Unavailable") : Number(formatUnits(balance.data, 6)).toLocaleString("en-US", { maximumFractionDigits: 2 }) + " mUSDC"}</strong></div>
       </div>
       <button className="button button-secondary button-small" onClick={claim} disabled={isPending || receipt.isLoading || !mockUsdcAddress}>
         {isPending || receipt.isLoading ? <LoaderCircle className="spin" size={15} /> : receipt.isSuccess ? <Check size={15} /> : <Droplets size={15} />}

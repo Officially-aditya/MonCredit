@@ -54,10 +54,10 @@ export default function DashboardPage() {
         <button className="button button-primary" onClick={() => setRequestOpen(true)}><Wallet size={16} /> Request a loan</button>
       </div>
 
-      {!creditMarketAddress && <div className="notice notice-open notice-neutral"><Info size={16} /><span><strong>Testnet setup</strong> — deploy CreditMarket and MockUSDC, then add their addresses to .env.local to enable live reads and transactions.</span></div>}
+      {!creditMarketAddress && <div className="notice notice-open notice-neutral"><Info size={16} /><span><strong>Testnet setup</strong>: deploy CreditMarket and MockUSDC, then add their addresses to .env.local to enable live reads and transactions.</span></div>}
 
       <div className="metric-grid">
-        <Metric icon={<CircleDollarSign size={17} />} label="Available to borrow" value={eligibility ? "$" + eligibility.maxLoanUsd.toLocaleString() : "—"} foot={eligibility ? "Based on your verified profile" : "Verify your Ethereum history"} tone="violet" />
+        <Metric icon={<CircleDollarSign size={17} />} label="Available to borrow" value={eligibility ? "$" + eligibility.maxLoanUsd.toLocaleString() : "Pending"} foot={eligibility ? "Based on your verified profile" : "Verify your Ethereum history"} tone="violet" />
         <Metric icon={<Wallet size={17} />} label="Active borrowing" value={formatUsd(outstanding)} foot={personal.borrowed.filter((loan) => loan.status === "Active").length + " active loans"} tone="blue" />
         <Metric icon={<HandCoins size={17} />} label="Lent to borrowers" value={formatUsd(activeLent)} foot={personal.lent.filter((loan) => loan.status === "Active").length + " active positions"} tone="green" />
         <Metric icon={<ShieldCheck size={17} />} label="Guarantees at risk" value={formatUsd(guaranteeExposure)} foot="Returned after repayment" tone="amber" />

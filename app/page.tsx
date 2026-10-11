@@ -33,7 +33,7 @@ export default function HomePage() {
           <div className="dashboard-preview">
             <div className="preview-main">
               <div className="preview-title">Onchain profile <span className="preview-verified">Verified</span></div>
-              <div className="preview-score-row"><div><span className="preview-metric-label">MonCredit score</span><strong>—<small> / 100</small></strong></div><div className="preview-score-ring"><span>—</span><small>history</small></div></div>
+              <div className="preview-score-row"><div><span className="preview-metric-label">MonCredit score</span><strong>Pending<small> / 100</small></strong></div><div className="preview-score-ring"><span>Pending</span><small>history</small></div></div>
               <div className="preview-rule" />
               <div className="preview-data-row"><div><span>Wallet age</span><strong>Ethereum</strong></div><div><span>Credit limit</span><strong>Pending review</strong></div></div>
               <div className="preview-data-row"><div><span>History checked</span><strong>Historical activity</strong></div><div><span>Network</span><strong><i className="network-indicator" /> Monad</strong></div></div>
