@@ -47,7 +47,7 @@ export default function HomePage() {
       </section>
 
       <section className="trust-strip">
-        <span>Credit that sees more than collateral</span><span className="trust-divider" /><span>Ethereum history · Monad settlement · USDC terms</span>
+        <span>Credit that sees more than collateral</span><span className="trust-divider" /><span>Ethereum history · Monad settlement · MON terms</span>
       </section>
 
       <section className="steps-section section-wrap" id="how-it-works">

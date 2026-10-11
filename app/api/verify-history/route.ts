@@ -306,8 +306,8 @@ export async function POST(request: Request) {
         scoreParts.defaultPenalty,
       100,
     );
-    const maxLoanUsd = score < 25 ? 0 : Math.max(0, Math.min(5_000, 100 + score * 10 - Number(defaultCount) * 100));
-    const maxLoanAmount = BigInt(maxLoanUsd) * 1_000_000n;
+    const maxLoanMon = score < 25 ? 0 : Math.max(0, Math.min(5_000, 100 + score * 10 - Number(defaultCount) * 100));
+    const maxLoanAmount = BigInt(maxLoanMon) * 10n ** 18n;
     const eligibilityExpiry = BigInt(Math.floor(Date.now() / 1_000) + 24 * 60 * 60);
     const history = {
       ethereumAddress,
@@ -330,7 +330,7 @@ export async function POST(request: Request) {
       },
       scoreParts,
       score,
-      methodologyVersion: "moncredit-v1",
+      methodologyVersion: "moncredit-v2-native-mon",
       historyTruncated,
     };
     const historyHash = keccak256(toHex(JSON.stringify(history)));
@@ -375,7 +375,7 @@ export async function POST(request: Request) {
       score,
       scoreParts,
       maxLoanAmount: maxLoanAmount.toString(),
-      maxLoanUsd,
+      maxLoanMon,
       nonce: nonce.toString(),
       eligibilityExpiry: eligibilityExpiry.toString(),
       historyHash,

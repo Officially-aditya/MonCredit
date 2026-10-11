@@ -134,7 +134,7 @@ export default function VerifyPage() {
               </div>
             </div>
             <div className="assessment-side">
-              <div className="open-section credit-limit-section"><h3>Estimated borrowing limit</h3><strong>{"$"}{eligibility.maxLoanUsd.toLocaleString()}</strong><span>mUSDC · subject to loan terms</span><div className="limit-divider" /><small>Authorization valid until {new Date(Number(eligibility.eligibilityExpiry) * 1_000).toLocaleString()}</small></div>
+              <div className="open-section credit-limit-section"><h3>Estimated borrowing limit</h3><strong>{eligibility.maxLoanMon.toLocaleString()} MON</strong><span>Subject to loan terms</span><div className="limit-divider" /><small>Authorization valid until {new Date(Number(eligibility.eligibilityExpiry) * 1_000).toLocaleString()}</small></div>
               <div className="open-section history-facts">
                 <Fact label="Wallet age" value={formatAge(eligibility.history.walletAgeDays)} />
                 <Fact label="Observed transactions" value={eligibility.history.transactionCount.toLocaleString()} />

@@ -11,7 +11,7 @@ export type EligibilityAuthorization = {
     defaultPenalty: number;
   };
   maxLoanAmount: string;
-  maxLoanUsd: number;
+  maxLoanMon: number;
   nonce: string;
   eligibilityExpiry: string;
   historyHash: string;
@@ -46,6 +46,7 @@ export function readEligibility(address?: string): EligibilityAuthorization | nu
     const raw = window.localStorage.getItem("moncredit:eligibility:" + address.toLowerCase());
     if (!raw) return null;
     const value = JSON.parse(raw) as EligibilityAuthorization;
+    if (value.history.methodologyVersion !== "moncredit-v2-native-mon") return null;
     if (value.borrowingAddress.toLowerCase() !== address.toLowerCase()) return null;
     if (Number(value.eligibilityExpiry) < Math.floor(Date.now() / 1_000)) return null;
     return value;

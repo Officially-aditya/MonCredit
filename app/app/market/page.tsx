@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { ArrowRight, HandCoins, Info, ShieldCheck } from "lucide-react";
-import { formatUnits } from "viem";
 import { BorrowRequestDialog } from "@/components/borrow-request-dialog";
 import { LoanRow } from "@/components/loan-row";
 import { LoanTransaction } from "@/components/loan-transaction";
 import { useMarketLoans } from "@/components/market-hooks";
+import { formatMon } from "@/lib/mon";
 
 type MarketView = "guarantees" | "lending";
 
@@ -66,9 +66,9 @@ export default function MarketPage() {
       <div className="page-heading">
         <div><h1>Loan market</h1><p>Review guarantee requests or fund loans with full coverage.</p></div>
         {view === "guarantees" ? (
-          <div className="heading-note"><ShieldCheck size={16} /><span>Active guarantees<br /><strong>{"$"}{Number(formatUnits(activeExposure, 6)).toLocaleString("en-US", { maximumFractionDigits: 2 })} mUSDC</strong></span></div>
+          <div className="heading-note"><ShieldCheck size={16} /><span>Active guarantees<br /><strong>{formatMon(activeExposure)} MON</strong></span></div>
         ) : (
-          <div className="heading-note"><HandCoins size={16} /><span>Active lending<br /><strong>{"$"}{Number(formatUnits(activeLending, 6)).toLocaleString("en-US", { maximumFractionDigits: 2 })} mUSDC</strong></span></div>
+          <div className="heading-note"><HandCoins size={16} /><span>Active lending<br /><strong>{formatMon(activeLending)} MON</strong></span></div>
         )}
       </div>
 
@@ -90,7 +90,7 @@ export default function MarketPage() {
           </section>
           <section className="section-block">
             <div className="section-heading-row"><div><h2>Your guarantees</h2></div><span className="result-count">{guarantees.length} positions</span></div>
-            {guarantees.length ? <div className="loan-list">{guarantees.map(({ loan, amount }) => <LoanRow key={loan.id} loan={loan} action={<div className="guarantee-position-note"><span>Your commitment</span><strong>{"$"}{Number(formatUnits(amount, 6)).toLocaleString("en-US", { maximumFractionDigits: 2 })} mUSDC</strong></div>} />)}</div> :
+            {guarantees.length ? <div className="loan-list">{guarantees.map(({ loan, amount }) => <LoanRow key={loan.id} loan={loan} action={<div className="guarantee-position-note"><span>Your commitment</span><strong>{formatMon(amount)} MON</strong></div>} />)}</div> :
               <div className="empty-state compact-empty"><h3>No guarantee positions yet</h3><p>When you back a request, your exposure and reward terms will appear here.</p></div>}
           </section>
         </>
@@ -99,7 +99,7 @@ export default function MarketPage() {
           <div className="lender-explainer open-section">
             <span className="explainer-rule" aria-hidden="true" />
             <div><strong>Funding requires full guarantee coverage</strong><p>The contract only accepts a loan when its coverage target is met. Interest is split between the lender and guarantors at repayment.</p></div>
-            <div className="explainer-potential"><span>Interest on ready requests</span><strong>{"$"}{Number(formatUnits(possibleInterest, 6)).toLocaleString("en-US", { maximumFractionDigits: 2 })}</strong><small>if all are funded and repaid</small></div>
+            <div className="explainer-potential"><span>Interest on ready requests</span><strong>{formatMon(possibleInterest)} MON</strong><small>if all are funded and repaid</small></div>
           </div>
           <section className="section-block">
             <div className="section-heading-row"><div><h2>Loans ready to fund</h2></div><span className="result-count">{loading ? "Updating…" : readyToFund.length + " ready"}</span></div>

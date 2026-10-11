@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, CalendarDays, Check, Clipboard, Clock3, ExternalLink, HandCoins, LockKeyhole, Shield, Wallet } from "lucide-react";
-import { formatUnits } from "viem";
 import { useAccount, usePublicClient } from "wagmi";
 import { LoanTransaction } from "@/components/loan-transaction";
 import { StatusPill } from "@/components/status-pill";
@@ -12,6 +11,7 @@ import { shortAddress } from "@/components/loan-row";
 import { creditMarketAddress, type LoanRecord } from "@/lib/market";
 import { fetchLoan } from "@/lib/market-data";
 import { explorerBaseUrl } from "@/lib/chain";
+import { formatMon } from "@/lib/mon";
 
 export default function LoanDetailsPage() {
   const params = useParams<{ id: string }>();
@@ -53,7 +53,7 @@ export default function LoanDetailsPage() {
   if (loading) return <div className="workspace-page"><div className="loader-row"><span className="spinner" /> Loading loan from Monad testnet…</div></div>;
   if (!loan) return <div className="workspace-page"><Link href="/app/market?view=lending" className="inline-link"><ArrowLeft size={14} /> Back to lending</Link><div className="empty-state"><h2>Loan not found</h2><p>Check the link or connect to the network where this request was created.</p></div></div>;
 
-  const principal = Number(formatUnits(loan.principal, 6));
+  const principal = formatMon(loan.principal);
   const totalInterest = loan.principal * BigInt(loan.interestBps) / 10_000n;
   const guarantorInterest = totalInterest * BigInt(loan.guarantorInterestBps) / 10_000n;
   const lenderInterest = totalInterest - guarantorInterest;
@@ -68,7 +68,7 @@ export default function LoanDetailsPage() {
     <div className="workspace-page">
       <Link href="/app/market?view=lending" className="back-link"><ArrowLeft size={14} /> Back to market</Link>
       <div className="page-heading loan-detail-heading">
-        <div><p className="loan-number">Loan #{loan.id.padStart(4, "0")}</p><h1>{"$"}{principal.toLocaleString("en-US", { maximumFractionDigits: 2 })} mUSDC request</h1><p>Review the borrower, guarantee pool, and repayment split before taking action.</p></div>
+        <div><p className="loan-number">Loan #{loan.id.padStart(4, "0")}</p><h1>{principal} MON request</h1><p>Review the borrower, guarantee pool, and repayment split before taking action.</p></div>
         <div className="loan-detail-actions"><StatusPill status={loan.status} /><button className="button button-secondary button-small" onClick={copyLink}>{copied ? <Check size={14} /> : <Clipboard size={14} />}{copied ? "Link copied" : "Share request"}</button></div>
       </div>
 
@@ -77,12 +77,12 @@ export default function LoanDetailsPage() {
       <div className="loan-detail-grid">
         <div className="loan-detail-primary">
           <section className="open-section loan-overview-section">
-            <div className="loan-overview-amount"><span>Requested principal</span><strong>{"$"}{principal.toLocaleString("en-US", { maximumFractionDigits: 2 })}</strong><small>mUSDC</small></div>
+            <div className="loan-overview-amount"><span>Requested principal</span><strong>{principal}</strong><small>MON</small></div>
             <div className="loan-overview-stats">
               <DetailFact icon={<Clock3 size={15} />} label="Repayment term" value={loan.dueAt ? formatDate(loan.dueAt) : Math.ceil(loan.durationSeconds / 86_400) + " days after funding"} />
               <DetailFact icon={<HandCoins size={15} />} label="Interest rate" value={(loan.interestBps / 100).toFixed(1) + "% flat"} />
-              <DetailFact icon={<Shield size={15} />} label="Guarantee required" value={formatMoney(loan.requiredGuarantee) + " mUSDC"} />
-              <DetailFact icon={<LockKeyhole size={15} />} label="Lender exposure at target" value={formatMoney(unsecuredAtTarget) + " mUSDC unsecured"} />
+              <DetailFact icon={<Shield size={15} />} label="Guarantee required" value={formatMoney(loan.requiredGuarantee) + " MON"} />
+              <DetailFact icon={<LockKeyhole size={15} />} label="Lender exposure at target" value={formatMoney(unsecuredAtTarget) + " MON unsecured"} />
               <DetailFact icon={<CalendarDays size={15} />} label="Request closes" value={formatDate(loan.requestDeadline)} />
             </div>
           </section>
@@ -104,20 +104,20 @@ export default function LoanDetailsPage() {
 
           <section className="open-section guarantee-detail-section">
             <div className="section-heading"><h2>Collateral commitments</h2></div>
-            <div className="pool-amounts"><div><span>Committed</span><strong>{formatMoney(loan.guaranteeTotal)} <small>mUSDC</small></strong></div><div><span>Coverage target</span><strong>{formatMoney(loan.requiredGuarantee)} <small>mUSDC</small></strong></div></div>
+            <div className="pool-amounts"><div><span>Committed</span><strong>{formatMoney(loan.guaranteeTotal)} <small>MON</small></strong></div><div><span>Coverage target</span><strong>{formatMoney(loan.requiredGuarantee)} <small>MON</small></strong></div></div>
             <div className="progress-track detail-progress"><span style={{ width: (loan.requiredGuarantee ? Number(loan.guaranteeTotal * 100n / loan.requiredGuarantee) : 0) + "%" }} /></div>
             <div className="progress-foot"><span>{loan.guarantees.length} guarantor{loan.guarantees.length === 1 ? "" : "s"}</span><span>{loan.requiredGuarantee ? Number(loan.guaranteeTotal * 100n / loan.requiredGuarantee) : 0}% secured</span></div>
-            {loan.guarantees.length > 0 && <div className="guarantor-list">{loan.guarantees.map((guarantor) => <div className="guarantor-row" key={guarantor.address}><span className="guarantor-avatar"><Shield size={14} /></span><span>{shortAddress(guarantor.address)}</span><strong>{formatMoney(guarantor.amount)} mUSDC</strong></div>)}</div>}
+            {loan.guarantees.length > 0 && <div className="guarantor-list">{loan.guarantees.map((guarantor) => <div className="guarantor-row" key={guarantor.address}><span className="guarantor-avatar"><Shield size={14} /></span><span>{shortAddress(guarantor.address)}</span><strong>{formatMoney(guarantor.amount)} MON</strong></div>)}</div>}
             {loan.status === "Open" && !expiredRequest && remainingCoverage > 0n && !borrowerOwns && <LoanTransaction action="guarantee" loan={loan} onSuccess={refresh} />}
             {alreadyGuaranteed && loan.status === "Open" && <p className="small-note">You have already committed to this guarantee pool. Additional commitments are available from the same request page.</p>}
           </section>
 
           <section className="open-section repayment-detail-section">
             <div className="section-heading"><div><h2>Where the interest goes</h2></div></div>
-            <div className="repayment-total"><span>Borrower repays</span><strong>{formatMoney(loan.principal + totalInterest)} mUSDC</strong></div>
+            <div className="repayment-total"><span>Borrower repays</span><strong>{formatMoney(loan.principal + totalInterest)} MON</strong></div>
             <div className="repayment-distribution">
-              <div><span className="distribution-dot lender-dot" /><span>Lender receives</span><strong>{formatMoney(loan.principal + lenderInterest)} mUSDC</strong><small>Principal + {formatMoney(lenderInterest)} interest</small></div>
-              <div><span className="distribution-dot guarantor-dot" /><span>Guarantors share</span><strong>{formatMoney(loan.guaranteeTotal + guarantorInterest)} mUSDC</strong><small>Collateral returned + {formatMoney(guarantorInterest)} interest</small></div>
+              <div><span className="distribution-dot lender-dot" /><span>Lender receives</span><strong>{formatMoney(loan.principal + lenderInterest)} MON</strong><small>Principal + {formatMoney(lenderInterest)} interest</small></div>
+              <div><span className="distribution-dot guarantor-dot" /><span>Guarantors share</span><strong>{formatMoney(loan.guaranteeTotal + guarantorInterest)} MON</strong><small>Collateral returned + {formatMoney(guarantorInterest)} interest</small></div>
             </div>
             <p className="small-note">Guarantor rewards are split in proportion to each collateral commitment. If the borrower defaults, the guarantee pool goes to the lender and remaining principal loss stays with the lender.</p>
           </section>
@@ -135,7 +135,7 @@ export default function LoanDetailsPage() {
               <div className="available-actions">
                 {loan.guaranteeTotal >= loan.requiredGuarantee && !borrowerOwns && !alreadyGuaranteed && loan.lender === "0x0000000000000000000000000000000000000000" && <LoanTransaction action="fund" loan={loan} onSuccess={refresh} />}
                 {loan.guaranteeTotal >= loan.requiredGuarantee && alreadyGuaranteed && <p className="small-note">You are part of the guarantee pool, so you cannot also fund this request.</p>}
-                {loan.guaranteeTotal < loan.requiredGuarantee && <p className="small-note">The request needs {formatMoney(remainingCoverage)} more mUSDC in guarantees before a lender can fund it.</p>}
+                {loan.guaranteeTotal < loan.requiredGuarantee && <p className="small-note">The request needs {formatMoney(remainingCoverage)} more MON in guarantees before a lender can fund it.</p>}
                 {!borrowerOwns && !alreadyGuaranteed && loan.guaranteeTotal < loan.requiredGuarantee && <p className="small-note">You can provide part or all of the remaining collateral in the guarantee panel.</p>}
                 {borrowerOwns && <p className="small-note">Share this request with guarantors. Once coverage is complete, a lender can fund it.</p>}
               </div>
@@ -165,7 +165,7 @@ function Participant({ icon, role, address }: { icon: React.ReactNode; role: str
 }
 
 function formatMoney(amount: bigint) {
-  return "$" + new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 6 }).format(Number(formatUnits(amount, 6)));
+  return formatMon(amount);
 }
 
 function formatDate(timestamp: number) {

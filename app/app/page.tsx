@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, BadgeCheck, CircleDollarSign, Clock3, HandCoins, Info, ShieldCheck, Wallet } from "lucide-react";
-import { formatUnits } from "viem";
+import { ArrowRight, BadgeCheck, Clock3, Coins, HandCoins, Info, ShieldCheck, Wallet } from "lucide-react";
 import { useAccount, useReadContract } from "wagmi";
 import { LoanRow } from "@/components/loan-row";
 import { WalletTools } from "@/components/wallet-tools";
@@ -11,6 +10,7 @@ import { BorrowRequestDialog } from "@/components/borrow-request-dialog";
 import { useMarketLoans } from "@/components/market-hooks";
 import { creditMarketAbi, creditMarketAddress } from "@/lib/market";
 import { readEligibility, type EligibilityAuthorization } from "@/lib/eligibility";
+import { formatMon } from "@/lib/mon";
 
 export default function DashboardPage() {
   const { address } = useAccount();
@@ -54,18 +54,18 @@ export default function DashboardPage() {
         <button className="button button-primary" onClick={() => setRequestOpen(true)}><Wallet size={16} /> Request a loan</button>
       </div>
 
-      {!creditMarketAddress && <div className="notice notice-open notice-neutral"><Info size={16} /><span><strong>Testnet setup</strong>: deploy CreditMarket and MockUSDC, then add their addresses to .env.local to enable live reads and transactions.</span></div>}
+      {!creditMarketAddress && <div className="notice notice-open notice-neutral"><Info size={16} /><span><strong>Testnet setup</strong>: deploy CreditMarket and add its address to .env.local to enable live reads and transactions.</span></div>}
 
       <div className="metric-grid">
-        <Metric icon={<CircleDollarSign size={17} />} label="Available to borrow" value={eligibility ? "$" + eligibility.maxLoanUsd.toLocaleString() : "Pending"} foot={eligibility ? "Based on your verified profile" : "Verify your Ethereum history"} tone="violet" />
-        <Metric icon={<Wallet size={17} />} label="Active borrowing" value={formatUsd(outstanding)} foot={personal.borrowed.filter((loan) => loan.status === "Active").length + " active loans"} tone="blue" />
-        <Metric icon={<HandCoins size={17} />} label="Lent to borrowers" value={formatUsd(activeLent)} foot={personal.lent.filter((loan) => loan.status === "Active").length + " active positions"} tone="green" />
-        <Metric icon={<ShieldCheck size={17} />} label="Guarantees at risk" value={formatUsd(guaranteeExposure)} foot="Returned after repayment" tone="amber" />
+        <Metric icon={<Coins size={17} />} label="Available to borrow" value={eligibility ? eligibility.maxLoanMon.toLocaleString() + " MON" : "Pending"} foot={eligibility ? "Based on your verified profile" : "Verify your Ethereum history"} tone="violet" />
+        <Metric icon={<Wallet size={17} />} label="Active borrowing" value={formatMon(outstanding) + " MON"} foot={personal.borrowed.filter((loan) => loan.status === "Active").length + " active loans"} tone="blue" />
+        <Metric icon={<HandCoins size={17} />} label="Lent to borrowers" value={formatMon(activeLent) + " MON"} foot={personal.lent.filter((loan) => loan.status === "Active").length + " active positions"} tone="green" />
+        <Metric icon={<ShieldCheck size={17} />} label="Guarantees at risk" value={formatMon(guaranteeExposure) + " MON"} foot="Returned after repayment" tone="amber" />
       </div>
 
       <div className="dashboard-grid">
         <section className="open-section wallet-panel">
-          <div className="section-heading"><h2>Your test funds</h2></div>
+          <div className="section-heading"><h2>Your MON balance</h2></div>
           <WalletTools />
         </section>
         <section className="open-section credit-panel">
@@ -73,7 +73,7 @@ export default function DashboardPage() {
           {eligibility ? (
             <div className="profile-content">
               <div className="score-block"><div className="score-ring"><span>{eligibility.score}</span><small>/100</small></div><div><strong>History score</strong><span>{eligibility.history.transactionCount.toLocaleString()} observed transactions · {eligibility.history.activeMonths} active months</span></div></div>
-              <div className="credit-limit-row"><span>Estimated credit limit</span><strong>{"$"}{eligibility.maxLoanUsd.toLocaleString()} mUSDC</strong></div>
+              <div className="credit-limit-row"><span>Estimated borrowing limit</span><strong>{eligibility.maxLoanMon.toLocaleString()} MON</strong></div>
               <Link href="/app/verify" className="inline-link">Review your assessment <ArrowRight size={14} /></Link>
             </div>
           ) : (
@@ -95,7 +95,7 @@ export default function DashboardPage() {
         <div className="quiet-footnote">
           <span>Repayments recorded</span><strong>{Number(record.data[0])}</strong>
           <span>Defaults recorded</span><strong>{Number(record.data[1])}</strong>
-          <span>All time borrowed</span><strong>{formatUnits(record.data[2], 6)} mUSDC</strong>
+          <span>All time borrowed</span><strong>{formatMon(record.data[2])} MON</strong>
         </div>
       )}
       <BorrowRequestDialog open={requestOpen} onClose={() => setRequestOpen(false)} onSuccess={refresh} />
@@ -105,8 +105,4 @@ export default function DashboardPage() {
 
 function Metric({ icon, label, value, foot, tone }: { icon: React.ReactNode; label: string; value: string; foot: string; tone: string }) {
   return <article className="metric"><span className={"metric-icon " + tone}>{icon}</span><span className="metric-label">{label}</span><strong className="metric-value">{value}</strong><span className="metric-foot">{foot}</span></article>;
-}
-
-function formatUsd(amount: bigint) {
-  return "$" + Number(formatUnits(amount, 6)).toLocaleString("en-US", { maximumFractionDigits: 2 });
 }

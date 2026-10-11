@@ -1,19 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 /// @title CreditMarket
-/// @notice USDC lending backed by borrower-supplied Ethereum history attestations
+/// @notice Native MON lending backed by borrower-supplied Ethereum history attestations
 ///         and collateral commitments from multiple guarantors.
 contract CreditMarket is Ownable, ReentrancyGuard {
-    using SafeERC20 for IERC20;
-
     uint256 public constant BPS = 10_000;
     uint256 public constant MAX_GUARANTORS = 16;
     uint64 public constant MIN_DURATION = 1 days;
@@ -60,7 +56,6 @@ contract CreditMarket is Ownable, ReentrancyGuard {
         uint8 supportedAssetCount;
     }
 
-    IERC20 public immutable stablecoin;
     address public eligibilitySigner;
     uint256 public nextLoanId = 1;
     mapping(uint256 loanId => Loan) private loans;
@@ -87,10 +82,8 @@ contract CreditMarket is Ownable, ReentrancyGuard {
     event LoanCancelled(uint256 indexed loanId);
     event EligibilitySignerUpdated(address indexed signer);
 
-    constructor(IERC20 stablecoin_, address signer_) Ownable(msg.sender) {
-        require(address(stablecoin_) != address(0), "Invalid token");
+    constructor(address signer_) Ownable(msg.sender) {
         require(signer_ != address(0), "Invalid signer");
-        stablecoin = stablecoin_;
         eligibilitySigner = signer_;
     }
 
@@ -169,12 +162,13 @@ contract CreditMarket is Ownable, ReentrancyGuard {
         emit LoanRequested(loanId, msg.sender, amount, requestDeadline, eligibility.historyHash);
     }
 
-    function commitGuarantee(uint256 loanId, uint256 amount) external nonReentrant {
+    function commitGuarantee(uint256 loanId) external payable nonReentrant {
         Loan storage loan = loans[loanId];
         require(loan.borrower != address(0), "Unknown loan");
         require(loan.status == Status.Open, "Loan not open");
         require(block.timestamp <= loan.requestDeadline, "Request expired");
         require(msg.sender != loan.borrower, "Borrower cannot guarantee");
+        uint256 amount = msg.value;
         require(amount > 0, "Invalid amount");
 
         uint256 required = minimumGuarantee(loanId);
@@ -184,13 +178,12 @@ contract CreditMarket is Ownable, ReentrancyGuard {
             guarantors[loanId].push(msg.sender);
         }
 
-        stablecoin.safeTransferFrom(msg.sender, address(this), amount);
         guaranteeOf[loanId][msg.sender] += amount;
         loan.guaranteeTotal += uint128(amount);
         emit GuaranteeCommitted(loanId, msg.sender, amount);
     }
 
-    function fundLoan(uint256 loanId) external nonReentrant {
+    function fundLoan(uint256 loanId) external payable nonReentrant {
         Loan storage loan = loans[loanId];
         require(loan.borrower != address(0), "Unknown loan");
         require(loan.status == Status.Open, "Loan not open");
@@ -198,28 +191,32 @@ contract CreditMarket is Ownable, ReentrancyGuard {
         require(loan.guaranteeTotal >= minimumGuarantee(loanId), "Guarantee target not met");
         require(msg.sender != loan.borrower, "Borrower cannot lend");
         require(guaranteeOf[loanId][msg.sender] == 0, "Guarantor cannot lend");
+        require(msg.value == loan.principal, "Incorrect MON amount");
 
         loan.lender = msg.sender;
         loan.dueAt = uint64(block.timestamp) + loan.durationSeconds;
         loan.status = Status.Active;
-        stablecoin.safeTransferFrom(msg.sender, address(this), loan.principal);
-        stablecoin.safeTransfer(loan.borrower, loan.principal);
+        _sendNative(loan.borrower, loan.principal);
         totalBorrowed[loan.borrower] += loan.principal;
         fundedCount[msg.sender] += 1;
         emit LoanFunded(loanId, msg.sender, loan.dueAt);
     }
 
-    function repayLoan(uint256 loanId) external nonReentrant {
+    function repayLoan(uint256 loanId) external payable nonReentrant {
         Loan storage loan = loans[loanId];
         require(loan.status == Status.Active, "Loan not active");
         require(msg.sender == loan.borrower, "Only borrower");
         require(block.timestamp <= loan.dueAt, "Loan past due");
 
         uint256 interest = uint256(loan.principal) * loan.interestBps / BPS;
+        require(msg.value == uint256(loan.principal) + interest, "Incorrect MON amount");
         uint256 guarantorInterest = interest * loan.guarantorInterestBps / BPS;
         uint256 lenderInterest = interest - guarantorInterest;
-        stablecoin.safeTransferFrom(msg.sender, address(this), uint256(loan.principal) + interest);
-        stablecoin.safeTransfer(loan.lender, uint256(loan.principal) + lenderInterest);
+
+        loan.status = Status.Repaid;
+        repaidCount[loan.borrower] += 1;
+        totalRepaid[loan.borrower] += uint256(loan.principal) + interest;
+        _sendNative(loan.lender, uint256(loan.principal) + lenderInterest);
 
         address[] storage list = guarantors[loanId];
         uint256 interestRemaining = guarantorInterest;
@@ -230,12 +227,9 @@ contract CreditMarket is Ownable, ReentrancyGuard {
                 ? interestRemaining
                 : guarantorInterest * committed / loan.guaranteeTotal;
             interestRemaining -= share;
-            stablecoin.safeTransfer(guarantor, committed + share);
+            _sendNative(guarantor, committed + share);
         }
 
-        loan.status = Status.Repaid;
-        repaidCount[loan.borrower] += 1;
-        totalRepaid[loan.borrower] += uint256(loan.principal) + interest;
         emit LoanRepaid(loanId, loan.principal, interest);
     }
 
@@ -247,8 +241,8 @@ contract CreditMarket is Ownable, ReentrancyGuard {
         uint256 recovered = loan.guaranteeTotal;
         uint256 loss = uint256(loan.principal) - recovered;
         loan.status = Status.Defaulted;
-        stablecoin.safeTransfer(loan.lender, recovered);
         defaultCount[loan.borrower] += 1;
+        if (recovered > 0) _sendNative(loan.lender, recovered);
         emit LoanDefaulted(loanId, recovered, loss);
     }
 
@@ -261,9 +255,14 @@ contract CreditMarket is Ownable, ReentrancyGuard {
         for (uint256 i; i < list.length; ++i) {
             address guarantor = list[i];
             uint256 amount = guaranteeOf[loanId][guarantor];
-            if (amount > 0) stablecoin.safeTransfer(guarantor, amount);
+            if (amount > 0) _sendNative(guarantor, amount);
         }
         emit LoanCancelled(loanId);
+    }
+
+    function _sendNative(address recipient, uint256 amount) private {
+        (bool success,) = payable(recipient).call{value: amount}("");
+        require(success, "MON transfer failed");
     }
 
     function minimumGuarantee(uint256 loanId) public view returns (uint256) {

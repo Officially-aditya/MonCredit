@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useAccount, usePublicClient, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { ArrowRight, BadgeCheck, Check, ChevronDown, ExternalLink, LoaderCircle, ShieldCheck, X } from "lucide-react";
-import { formatUnits, parseUnits, type Hex } from "viem";
+import { type Hex } from "viem";
 import { creditMarketAbi, creditMarketAddress } from "@/lib/market";
 import { explorerBaseUrl } from "@/lib/chain";
 import { readEligibility, type EligibilityAuthorization } from "@/lib/eligibility";
+import { formatMon, parseMon } from "@/lib/mon";
 
 type BorrowRequestDialogProps = {
   open: boolean;
@@ -62,7 +63,7 @@ export function BorrowRequestDialog({ open, onClose, onSuccess }: BorrowRequestD
     }
     let principal: bigint;
     try {
-      principal = parseUnits(amount, 6);
+      principal = parseMon(amount);
     } catch {
       setFormError("Enter a valid loan amount.");
       return;
@@ -159,10 +160,10 @@ export function BorrowRequestDialog({ open, onClose, onSuccess }: BorrowRequestD
           <section className="open-section borrow-form-section">
             <div className="section-heading"><h3>Set your loan terms</h3></div>
             {!eligibility && <div className="notice notice-open notice-neutral"><BadgeCheck size={16} /><span>Start by verifying your wallet history. <Link href="/app/verify">Verify now <ArrowRight size={13} /></Link></span></div>}
-            {eligibility && eligibility.maxLoanUsd === 0 && <div className="notice notice-open notice-neutral"><BadgeCheck size={16} /><span>Your observable history does not meet the initial borrowing threshold. There is no guaranteed credit limit.</span></div>}
+            {eligibility && eligibility.maxLoanMon === 0 && <div className="notice notice-open notice-neutral"><BadgeCheck size={16} /><span>Your observable history does not meet the initial borrowing threshold. There is no guaranteed credit limit.</span></div>}
             <label className="form-label" htmlFor="loan-amount">Loan amount</label>
-            <div className="amount-input-wrap amount-input-large"><span>$</span><input id="loan-amount" type="number" min="1" max={eligibility?.maxLoanUsd || undefined} step="1" value={amount} onChange={(event) => setAmount(event.target.value)} /><span>mUSDC</span></div>
-            <div className="form-help-row"><span>Up to your estimated limit</span><strong>{eligibility ? "$" + eligibility.maxLoanUsd.toLocaleString() : "Verify history first"}</strong></div>
+            <div className="amount-input-wrap amount-input-large"><input id="loan-amount" type="number" min="0.01" max={eligibility?.maxLoanMon || undefined} step="0.01" value={amount} onChange={(event) => setAmount(event.target.value)} /><span>MON</span></div>
+            <div className="form-help-row"><span>Up to your estimated limit</span><strong>{eligibility ? eligibility.maxLoanMon.toLocaleString() + " MON" : "Verify history first"}</strong></div>
 
             <label className="form-label" htmlFor="loan-duration">Repayment term</label>
             <div className="select-wrap"><select id="loan-duration" value={durationDays} onChange={(event) => setDurationDays(event.target.value)}><option value="30">30 days</option><option value="60">60 days</option><option value="90">90 days</option><option value="180">180 days</option></select><ChevronDown size={15} /></div>
@@ -181,16 +182,16 @@ export function BorrowRequestDialog({ open, onClose, onSuccess }: BorrowRequestD
 
             <div className="repayment-breakdown">
               <div className="terms-heading"><strong>Repayment preview</strong><span>Flat rate</span></div>
-              <div className="terms-line"><span>Loan principal</span><strong>{formatAmount(principalPreview)} mUSDC</strong></div>
-              <div className="terms-line"><span>Interest ({interestPercent || "0"}%)</span><strong>{formatAmount(interestPreview)} mUSDC</strong></div>
-              <div className="terms-line total"><span>Total repayment</span><strong>{formatAmount(repaymentPreview)} mUSDC</strong></div>
+              <div className="terms-line"><span>Loan principal</span><strong>{formatAmount(principalPreview)} MON</strong></div>
+              <div className="terms-line"><span>Interest ({interestPercent || "0"}%)</span><strong>{formatAmount(interestPreview)} MON</strong></div>
+              <div className="terms-line total"><span>Total repayment</span><strong>{formatAmount(repaymentPreview)} MON</strong></div>
               <div className="terms-divider" />
-              <div className="terms-line"><span>Guarantee needed ({guaranteePercent || "0"}%)</span><strong>{formatAmount(guaranteePreview)} mUSDC</strong></div>
-              <div className="terms-line"><span>Interest shared with guarantors</span><strong>{formatAmount(guarantorRewardPreview)} mUSDC</strong></div>
+              <div className="terms-line"><span>Guarantee needed ({guaranteePercent || "0"}%)</span><strong>{formatAmount(guaranteePreview)} MON</strong></div>
+              <div className="terms-line"><span>Interest shared with guarantors</span><strong>{formatAmount(guarantorRewardPreview)} MON</strong></div>
               <p>Of the interest, {guarantorSharePercent || "0"}% is shared among guarantors in proportion to their guarantee. The lender receives principal plus the remaining interest.</p>
             </div>
 
-            <button className="button button-primary button-full" onClick={requestLoan} disabled={busy || !eligibility || eligibility.maxLoanUsd === 0 || !address}>
+            <button className="button button-primary button-full" onClick={requestLoan} disabled={busy || !eligibility || eligibility.maxLoanMon === 0 || !address}>
               {busy ? <LoaderCircle className="spin" size={16} /> : <Check size={16} />}
               {busy ? step : "Create loan request"}
               {!busy && <ArrowRight size={15} />}
@@ -223,12 +224,12 @@ function Journey({ number, title, detail, active = false }: { number: string; ti
 
 function parseAmountOrZero(amount: string) {
   try {
-    return parseUnits(amount || "0", 6);
+    return parseMon(amount || "0");
   } catch {
     return 0n;
   }
 }
 
 function formatAmount(amount: bigint) {
-  return "$" + new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 6 }).format(Number(formatUnits(amount, 6)));
+  return formatMon(amount);
 }

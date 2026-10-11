@@ -1,17 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {MockUSDC} from "../contracts/MockUSDC.sol";
 import {CreditMarket} from "../contracts/CreditMarket.sol";
 
 interface VmCreditMarketTest {
     function addr(uint256 privateKey) external returns (address);
     function sign(uint256 privateKey, bytes32 digest) external returns (uint8 v, bytes32 r, bytes32 s);
     function prank(address caller) external;
-    function startPrank(address caller) external;
-    function stopPrank() external;
     function warp(uint256 timestamp) external;
+    function deal(address account, uint256 newBalance) external;
 }
 
 contract CreditMarketTest {
@@ -21,9 +18,8 @@ contract CreditMarketTest {
     uint256 private constant GUARANTOR_A_KEY = 0xA;
     uint256 private constant GUARANTOR_B_KEY = 0xB;
     uint256 private constant LENDER_KEY = 0x1EAD;
-    uint256 private constant UNIT = 1e6;
+    uint256 private constant UNIT = 1 ether;
 
-    MockUSDC private token;
     CreditMarket private market;
     address private signer;
     address private borrower;
@@ -37,13 +33,12 @@ contract CreditMarketTest {
         guarantorA = vm.addr(GUARANTOR_A_KEY);
         guarantorB = vm.addr(GUARANTOR_B_KEY);
         lender = vm.addr(LENDER_KEY);
-        token = new MockUSDC();
-        market = new CreditMarket(IERC20(address(token)), signer);
+        market = new CreditMarket(signer);
 
-        token.mint(borrower, 10 * UNIT);
-        token.mint(guarantorA, 100 * UNIT);
-        token.mint(guarantorB, 100 * UNIT);
-        token.mint(lender, 100 * UNIT);
+        vm.deal(borrower, 10 * UNIT);
+        vm.deal(guarantorA, 100 * UNIT);
+        vm.deal(guarantorB, 100 * UNIT);
+        vm.deal(lender, 100 * UNIT);
     }
 
     function testRepaymentDistributesPrincipalAndInterest() public {
@@ -52,16 +47,14 @@ contract CreditMarketTest {
         _guarantee(loanId, guarantorB, 25 * UNIT);
         _fund(loanId);
 
-        require(token.balanceOf(borrower) == 110 * UNIT, "Borrower received principal");
-        token.mint(borrower, 100 * UNIT);
-        vm.startPrank(borrower);
-        token.approve(address(market), 110 * UNIT);
-        market.repayLoan(loanId);
-        vm.stopPrank();
+        require(borrower.balance == 110 * UNIT, "Borrower received principal");
+        vm.deal(borrower, borrower.balance + 110 * UNIT);
+        vm.prank(borrower);
+        market.repayLoan{value: 110 * UNIT}(loanId);
 
-        require(token.balanceOf(lender) == 106 * UNIT, "Lender gets principal and 60 percent interest");
-        require(token.balanceOf(guarantorA) == 102 * UNIT, "First guarantor gets collateral and interest");
-        require(token.balanceOf(guarantorB) == 102 * UNIT, "Second guarantor gets collateral and interest");
+        require(lender.balance == 106 * UNIT, "Lender gets principal and 60 percent interest");
+        require(guarantorA.balance == 102 * UNIT, "First guarantor gets collateral and interest");
+        require(guarantorB.balance == 102 * UNIT, "Second guarantor gets collateral and interest");
         require(market.repaidCount(borrower) == 1, "Repayment is recorded");
         (address borrower_, address lender_, uint256 principal, uint64 durationSeconds, uint256 guaranteeTotal, uint256 requiredGuarantee, uint64 requestDeadline, uint64 dueAt, uint16 interestBps, uint16 guaranteeBps, uint16 guarantorShare, uint8 status, bytes32 historyHash) = market.getLoanSummary(loanId);
         (uint8 score, uint32 walletAgeDays, uint32 transactionCount, uint16 activeMonths, uint8 supportedAssetCount) = market.getEligibilitySummary(loanId);
@@ -72,13 +65,13 @@ contract CreditMarketTest {
         require(interestBps == 1_000 && guaranteeBps == 5_000 && guarantorShare == 4_000, "Interest terms are recorded");
         require(score == 75 && walletAgeDays == 540 && transactionCount == 44 && activeMonths == 12 && supportedAssetCount == 2, "Signed history summary is recorded");
         require(requestDeadline > block.timestamp && dueAt > requestDeadline && historyHash != bytes32(0), "Loan metadata is recorded");
-        uint256 lenderBalance = token.balanceOf(lender);
+        uint256 lenderBalance = lender.balance;
         vm.prank(borrower);
         bool settledTwice;
         try market.repayLoan(loanId) {
             settledTwice = true;
         } catch {}
-        require(!settledTwice && token.balanceOf(lender) == lenderBalance, "Settlement cannot be repeated");
+        require(!settledTwice && lender.balance == lenderBalance, "Settlement cannot be repeated");
     }
 
     function testDefaultPaysLockedCollateralAndRecordsLenderLoss() public {
@@ -95,9 +88,9 @@ contract CreditMarketTest {
         vm.warp(uint256(dueAt) + 1);
         market.settleDefault(loanId);
 
-        require(token.balanceOf(lender) == 50 * UNIT, "Lender recovers collateral");
-        require(token.balanceOf(guarantorA) == 75 * UNIT, "Guarantee collateral is applied");
-        require(token.balanceOf(guarantorB) == 75 * UNIT, "Guarantee collateral is applied");
+        require(lender.balance == 50 * UNIT, "Lender recovers collateral");
+        require(guarantorA.balance == 75 * UNIT, "Guarantee collateral is applied");
+        require(guarantorB.balance == 75 * UNIT, "Guarantee collateral is applied");
         require(market.defaultCount(borrower) == 1, "Default is recorded");
     }
 
@@ -109,7 +102,7 @@ contract CreditMarketTest {
         vm.warp(uint256(requestDeadline) + 1);
         market.cancelExpiredRequest(loanId);
 
-        require(token.balanceOf(guarantorA) == 100 * UNIT, "Collateral is returned");
+        require(guarantorA.balance == 100 * UNIT, "Collateral is returned");
         (,,,,,,,,,,, uint8 finalStatus,) = market.getLoanSummary(loanId);
         require(finalStatus == uint8(CreditMarket.Status.Cancelled), "Request is closed");
     }
@@ -123,8 +116,8 @@ contract CreditMarketTest {
             funded = true;
         } catch {}
         require(!funded, "Funding requires the full guarantee");
-        require(token.balanceOf(lender) == 100 * UNIT, "Lender funds stay untouched");
-        require(token.balanceOf(borrower) == 10 * UNIT, "Borrower does not receive funds early");
+        require(lender.balance == 100 * UNIT, "Lender funds stay untouched");
+        require(borrower.balance == 10 * UNIT, "Borrower does not receive funds early");
     }
 
     function testEligibilitySignatureCannotBeReused() public {
@@ -194,17 +187,13 @@ contract CreditMarketTest {
     }
 
     function _guarantee(uint256 loanId, address guarantor, uint256 amount) private {
-        vm.startPrank(guarantor);
-        token.approve(address(market), amount);
-        market.commitGuarantee(loanId, amount);
-        vm.stopPrank();
+        vm.prank(guarantor);
+        market.commitGuarantee{value: amount}(loanId);
     }
 
     function _fund(uint256 loanId) private {
-        vm.startPrank(lender);
-        token.approve(address(market), 100 * UNIT);
-        market.fundLoan(loanId);
-        vm.stopPrank();
+        vm.prank(lender);
+        market.fundLoan{value: 100 * UNIT}(loanId);
     }
 
     function _signEligibility(
