@@ -51,7 +51,7 @@ export default function LoanDetailsPage() {
   }
 
   if (loading) return <div className="workspace-page"><div className="loader-row"><span className="spinner" /> Loading loan from Monad testnet…</div></div>;
-  if (!loan) return <div className="workspace-page"><Link href="/app/lend" className="inline-link"><ArrowLeft size={14} /> Back to lending</Link><div className="empty-state"><h2>Loan not found</h2><p>Check the link or connect to the network where this request was created.</p></div></div>;
+  if (!loan) return <div className="workspace-page"><Link href="/app/market?view=lending" className="inline-link"><ArrowLeft size={14} /> Back to lending</Link><div className="empty-state"><h2>Loan not found</h2><p>Check the link or connect to the network where this request was created.</p></div></div>;
 
   const principal = Number(formatUnits(loan.principal, 6));
   const totalInterest = loan.principal * BigInt(loan.interestBps) / 10_000n;
@@ -66,7 +66,7 @@ export default function LoanDetailsPage() {
 
   return (
     <div className="workspace-page">
-      <Link href="/app/lend" className="back-link"><ArrowLeft size={14} /> Back to market</Link>
+      <Link href="/app/market?view=lending" className="back-link"><ArrowLeft size={14} /> Back to market</Link>
       <div className="page-heading loan-detail-heading">
         <div><p className="loan-number">Loan #{loan.id.padStart(4, "0")}</p><h1>{"$"}{principal.toLocaleString("en-US", { maximumFractionDigits: 2 })} mUSDC request</h1><p>Review the borrower, guarantee pool, and repayment split before taking action.</p></div>
         <div className="loan-detail-actions"><StatusPill status={loan.status} /><button className="button button-secondary button-small" onClick={copyLink}>{copied ? <Check size={14} /> : <Clipboard size={14} />}{copied ? "Link copied" : "Share request"}</button></div>

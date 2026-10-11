@@ -8,7 +8,6 @@ import {
   HandCoins,
   LayoutDashboard,
   LifeBuoy,
-  Shield,
   Wallet,
 } from "lucide-react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -18,8 +17,7 @@ const navigation = [
   { label: "Overview", href: "/app", icon: LayoutDashboard },
   { label: "Proof of wealth", href: "/app/verify", icon: BadgeCheck },
   { label: "Borrow", href: "/app/borrow", icon: Wallet },
-  { label: "Guarantee", href: "/app/guarantee", icon: Shield },
-  { label: "Lend", href: "/app/lend", icon: HandCoins },
+  { label: "Market", href: "/app/market", icon: HandCoins },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {

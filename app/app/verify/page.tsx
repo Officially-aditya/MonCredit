@@ -6,6 +6,7 @@ import { useAccount, useSignMessage } from "wagmi";
 import { getAddress, toHex } from "viem";
 import { ArrowRight, BadgeCheck, Clock3, ExternalLink, FileCheck2, LoaderCircle, ShieldCheck, Wallet } from "lucide-react";
 import { EligibilityAuthorization, readEligibility } from "@/lib/eligibility";
+import { BorrowRequestDialog } from "@/components/borrow-request-dialog";
 
 export default function VerifyPage() {
   const { address } = useAccount();
@@ -15,6 +16,7 @@ export default function VerifyPage() {
   const [busy, setBusy] = useState(false);
   const [step, setStep] = useState("");
   const [error, setError] = useState("");
+  const [requestOpen, setRequestOpen] = useState(false);
 
   useEffect(() => {
     if (address) {
@@ -115,7 +117,7 @@ export default function VerifyPage() {
 
       {eligibility && (
         <section className="section-block assessment-section">
-          <div className="section-heading-row"><div><h2>Verified wallet profile</h2></div><Link href="/app/borrow" className="button button-primary button-small">Continue to borrow <ArrowRight size={14} /></Link></div>
+          <div className="section-heading-row"><div><h2>Verified wallet profile</h2></div><button className="button button-primary button-small" onClick={() => setRequestOpen(true)}>Request a loan <ArrowRight size={14} /></button></div>
           <div className="assessment-grid">
             <div className="open-section assessment-score-section">
               <div className="assessment-score">
@@ -152,6 +154,7 @@ export default function VerifyPage() {
           <p className="method-footnote">Method: {eligibility.history.methodologyVersion}. The asset snapshot shows up to three sampled blocks around observed activity; it does not represent a complete balance timeline. <a href="https://monad.xyz" target="_blank" rel="noreferrer">Learn about Monad <ExternalLink size={11} /></a></p>
         </section>
       )}
+      <BorrowRequestDialog open={requestOpen} onClose={() => setRequestOpen(false)} />
     </div>
   );
 }

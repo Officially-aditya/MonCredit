@@ -66,11 +66,11 @@ export default function HomePage() {
           </article>
           <article className="step-card">
             <span className="step-number">02</span><span className="step-icon"><Shield size={20} /></span>
-            <h3>Guarantee</h3><p>Stake part of a borrower’s guarantee. See your maximum loss and potential reward first.</p><Link href="/app/guarantee">Explore guarantees <ArrowRight size={14} /></Link>
+            <h3>Guarantee</h3><p>Stake part of a borrower’s guarantee. See your maximum loss and potential reward first.</p><Link href="/app/market?view=guarantees">Explore guarantees <ArrowRight size={14} /></Link>
           </article>
           <article className="step-card">
             <span className="step-number">03</span><span className="step-icon"><CircleDollarSign size={20} /></span>
-            <h3>Lend</h3><p>Fund requests when the guarantee is in place. Earn the interest share shown in the loan terms.</p><Link href="/app/lend">View the market <ArrowRight size={14} /></Link>
+            <h3>Lend</h3><p>Fund requests when the guarantee is in place. Earn the interest share shown in the loan terms.</p><Link href="/app/market?view=lending">View the market <ArrowRight size={14} /></Link>
           </article>
         </div>
       </section>

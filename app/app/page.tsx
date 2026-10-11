@@ -7,14 +7,16 @@ import { formatUnits } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 import { LoanRow } from "@/components/loan-row";
 import { WalletTools } from "@/components/wallet-tools";
+import { BorrowRequestDialog } from "@/components/borrow-request-dialog";
 import { useMarketLoans } from "@/components/market-hooks";
 import { creditMarketAbi, creditMarketAddress } from "@/lib/market";
 import { readEligibility, type EligibilityAuthorization } from "@/lib/eligibility";
 
 export default function DashboardPage() {
   const { address } = useAccount();
-  const { loans, loading } = useMarketLoans();
+  const { loans, loading, refresh } = useMarketLoans();
   const [eligibility, setEligibility] = useState<EligibilityAuthorization | null>(null);
+  const [requestOpen, setRequestOpen] = useState(false);
   const record = useReadContract({
     address: creditMarketAddress,
     abi: creditMarketAbi,
@@ -49,7 +51,7 @@ export default function DashboardPage() {
     <div className="workspace-page">
       <div className="page-heading dashboard-heading">
         <div><h1>Good to see you<span className="heading-period">.</span></h1><p>One clear view of the credit you’re building onchain.</p></div>
-        <Link href="/app/borrow" className="button button-primary"><Wallet size={16} /> Request a loan</Link>
+        <button className="button button-primary" onClick={() => setRequestOpen(true)}><Wallet size={16} /> Request a loan</button>
       </div>
 
       {!creditMarketAddress && <div className="notice notice-open notice-neutral"><Info size={16} /><span><strong>Testnet setup</strong> — deploy CreditMarket and MockUSDC, then add their addresses to .env.local to enable live reads and transactions.</span></div>}
@@ -81,10 +83,10 @@ export default function DashboardPage() {
       </div>
 
       <section className="section-block">
-        <div className="section-heading-row"><div><h2>Recent activity</h2></div><Link href="/app/lend" className="inline-link">Explore loans <ArrowRight size={14} /></Link></div>
+        <div className="section-heading-row"><div><h2>Recent activity</h2></div><Link href="/app/market?view=lending" className="inline-link">Explore loans <ArrowRight size={14} /></Link></div>
         {recent.length ? <div className="loan-list">{recent.map((loan) => <LoanRow key={loan.id} loan={loan} action={loan.status === "Active" && address?.toLowerCase() === loan.borrower.toLowerCase() ? <Link className="inline-link" href={"/app/loan/" + loan.id}>{loan.dueAt <= Math.floor(Date.now() / 1_000) ? "Settle default" : "Repay loan"} <ArrowRight size={13} /></Link> : undefined} />)}</div> : (
           <div className="empty-state">
-            {loading ? <div className="loader-row"><span className="spinner" /> Reading Monad testnet…</div> : <><h3>Your activity will show up here</h3><p>Once you borrow, guarantee, or fund a loan, its onchain status appears in this workspace.</p><Link href="/app/lend" className="inline-link">Browse the lending market <ArrowRight size={14} /></Link></>}
+            {loading ? <div className="loader-row"><span className="spinner" /> Reading Monad testnet…</div> : <><h3>Your activity will show up here</h3><p>Once you borrow, guarantee, or fund a loan, its onchain status appears in this workspace.</p><Link href="/app/market?view=lending" className="inline-link">Browse the lending market <ArrowRight size={14} /></Link></>}
           </div>
         )}
       </section>
@@ -96,6 +98,7 @@ export default function DashboardPage() {
           <span>All time borrowed</span><strong>{formatUnits(record.data[2], 6)} mUSDC</strong>
         </div>
       )}
+      <BorrowRequestDialog open={requestOpen} onClose={() => setRequestOpen(false)} onSuccess={refresh} />
     </div>
   );
 }
