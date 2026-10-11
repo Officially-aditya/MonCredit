@@ -38,6 +38,12 @@ The deployment script emits ContractsDeployed with the CreditMarket address and 
 
 Borrowing, guarantees, funding, and repayment use native MON. Wallets also need test MON for gas.
 
+Current testnet deployment (chain ID 10143):
+
+- CreditMarket: `0x8573E169A852f3c232d16dfF033cB67848F1c65b`
+- Eligibility signer: `0x45605364786BC8Aa885C354D96446e0d37069523`
+- [Deployment transaction](https://testnet.monadvision.com/tx/0x42c62816c7ecaf857ebcc0c4cfa60eb4ad3dc5703a05aab5b14884d8463d7708)
+
 ## Tests and build
 
     forge test -vv
