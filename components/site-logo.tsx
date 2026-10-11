@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 
 export function SiteLogo({ href = "/" }: { href?: string }) {
   return (
     <Link href={href} className="brand-lockup" aria-label="MonCredit home">
-      <span className="brand-mark"><Sparkles size={17} strokeWidth={2.4} /></span>
+      <Image className="brand-mark" src="/brand/moncredit-icon-full-color.svg" alt="" aria-hidden="true" width={28} height={28} />
       <span>moncredit</span>
     </Link>
   );

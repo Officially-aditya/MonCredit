@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="moncredit-icon-title moncredit-icon-desc">
+  <title id="moncredit-icon-title">MonCredit icon</title>
+  <desc id="moncredit-icon-desc">A violet rounded square with a white M and a mint bridge across its center.</desc>
+  <g id="moncredit-icon">
+    <rect x="2" y="2" width="60" height="60" rx="17" fill="#7458EE"/>
+    <path d="M14 48V18L32 36L50 18V48" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M27.5 36H36.5" fill="none" stroke="#55D6B0" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 64" role="img" aria-labelledby="moncredit-horizontal-light-title moncredit-horizontal-light-desc">
+  <title id="moncredit-horizontal-light-title">MonCredit light logo</title>
+  <desc id="moncredit-horizontal-light-desc">A single-color white MonCredit symbol and wordmark for dark backgrounds.</desc>
+  <g id="moncredit-symbol-light">
+    <path d="M8 50V14L32 37L56 14V50" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M27 37H37" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <text x="80" y="43" fill="#FFFFFF" font-family="Geist, Inter, Arial, sans-serif" font-size="32" font-weight="650" letter-spacing="-1.1">moncredit</text>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="bridge-title bridge-desc">
+  <title id="bridge-title">Bridge M</title>
+  <desc id="bridge-desc">A geometric M whose center span links both sides in violet and mint.</desc>
+  <g id="bridge-mark" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 48V18L32 36L50 18V48" stroke="#7458EE" stroke-width="7"/>
+    <path d="M27.5 36H36.5" stroke="#55D6B0" stroke-width="6"/>
+  </g>
+</svg>

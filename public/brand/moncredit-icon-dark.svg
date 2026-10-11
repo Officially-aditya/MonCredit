@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="moncredit-icon-dark-title moncredit-icon-dark-desc">
+  <title id="moncredit-icon-dark-title">MonCredit dark icon</title>
+  <desc id="moncredit-icon-dark-desc">A single-color geometric M with a shared span, for use on light backgrounds.</desc>
+  <path id="moncredit-dark-mark" d="M14 48V18L32 36L50 18V48" fill="none" stroke="#241B3D" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M27.5 36H36.5" fill="none" stroke="#241B3D" stroke-width="6" stroke-linecap="round"/>
+</svg>

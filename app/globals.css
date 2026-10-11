@@ -34,7 +34,7 @@ a { color: inherit; text-decoration: none; }
 ::selection { background: rgba(131, 110, 249, 0.18); }
 
 .brand-lockup { display: inline-flex; align-items: center; gap: 9px; color: #262431; font-size: 18px; font-weight: 710; letter-spacing: -0.8px; }
-.brand-mark { width: 28px; height: 28px; display: inline-grid; place-items: center; border-radius: 9px; color: #fff; background: linear-gradient(145deg, #9d8cff, #755cf2); box-shadow: 0 5px 12px rgba(131, 110, 249, .26); }
+.brand-mark { width: 28px; height: 28px; display: block; flex: 0 0 auto; border-radius: 0; }
 .eyebrow { display: inline-flex; align-items: center; gap: 7px; color: #8c8795; font-size: 10px; line-height: 1.4; font-weight: 720; letter-spacing: 1.3px; }
 .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: #8b75fb; box-shadow: 0 0 0 3px rgba(131, 110, 249, .13); }
 .button { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 9px; border: 1px solid transparent; border-radius: 11px; padding: 10px 15px; min-height: 40px; font-size: 12px; font-weight: 650; line-height: 1; transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease; }

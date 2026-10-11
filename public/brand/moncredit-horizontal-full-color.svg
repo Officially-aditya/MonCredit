@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 64" role="img" aria-labelledby="moncredit-horizontal-title moncredit-horizontal-desc">
+  <title id="moncredit-horizontal-title">MonCredit logo</title>
+  <desc id="moncredit-horizontal-desc">The Bridge M icon beside the lowercase MonCredit wordmark.</desc>
+  <g id="moncredit-symbol">
+    <rect x="2" y="2" width="60" height="60" rx="17" fill="#7458EE"/>
+    <path d="M14 48V18L32 36L50 18V48" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M27.5 36H36.5" fill="none" stroke="#55D6B0" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <text x="80" y="43" fill="#241B3D" font-family="Geist, Inter, Arial, sans-serif" font-size="32" font-weight="650" letter-spacing="-1.1">moncredit</text>
+</svg>

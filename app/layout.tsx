@@ -6,6 +6,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "MonCredit — Your Web3 history is worth something",
   description: "Borrow, lend, and guarantee responsibly with transparent onchain history on Monad.",
+  icons: { icon: "/brand/moncredit-icon-full-color.svg" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
