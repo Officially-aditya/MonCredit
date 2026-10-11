@@ -37,6 +37,12 @@ The deployment script emits ContractsDeployed with the MockUSDC address, CreditM
     NEXT_PUBLIC_CREDIT_MARKET_ADDRESS=0x...
     CREDIT_MARKET_ADDRESS=0x...
 
+Current Monad Testnet deployment (chain ID 10143):
+
+- MockUSDC: [0xa719118698f0E139fF284Ee4fBd3c58251e2dfB4](https://repo.sourcify.dev/10143/0xa719118698f0E139fF284Ee4fBd3c58251e2dfB4/)
+- CreditMarket: [0x70d134bcf970528986017d4281BC5eE6c22f2864](https://repo.sourcify.dev/10143/0x70d134bcf970528986017d4281BC5eE6c22f2864/)
+- Eligibility signer: `0x45605364786BC8Aa885C354D96446e0d37069523`
+
 The mock token has a one-time 1,000 mUSDC faucet for each test wallet. Wallets also need test MON for gas. Do not deploy the mock token as a production stablecoin.
 
 ## Tests and build
