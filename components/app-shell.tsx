@@ -30,7 +30,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="app-sidebar">
         <div className="sidebar-top">
           <SiteLogo href="/app" />
-          <span className="app-label">PERSONAL FINANCE</span>
           <nav className="sidebar-nav" aria-label="Main navigation">
             {navigation.map(({ label, href, icon: Icon }) => {
               const active = href === "/app" ? pathname === href : pathname.startsWith(href);
@@ -45,14 +44,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
         </div>
         <div className="sidebar-bottom">
-          <div className="network-card">
+          <div className="network-status">
             <span className="network-indicator" />
             <div><strong>Monad testnet</strong><small>mUSDC lending · test mode</small></div>
           </div>
           <a className="sidebar-help" href="https://docs.monad.xyz/" target="_blank" rel="noreferrer">
             <LifeBuoy size={16} /><span>Help & resources</span><ArrowUpRight size={13} />
           </a>
-          <div className="sidebar-version">MONCREDIT · PREVIEW</div>
         </div>
       </aside>
 

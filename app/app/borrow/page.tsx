@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, BadgeCheck, Check, ChevronDown, ExternalLink, LoaderCircle, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, BadgeCheck, Check, ChevronDown, ExternalLink, LoaderCircle, ShieldCheck } from "lucide-react";
 import { formatUnits, parseUnits, type Hex } from "viem";
 import { useAccount, usePublicClient, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { LoanCard } from "@/components/loan-card";
+import { LoanRow } from "@/components/loan-row";
 import { LoanTransaction } from "@/components/loan-transaction";
 import { useMarketLoans } from "@/components/market-hooks";
 import { creditMarketAbi, creditMarketAddress } from "@/lib/market";
@@ -138,15 +138,15 @@ export default function BorrowPage() {
   return (
     <div className="workspace-page">
       <div className="page-heading">
-        <div><span className="eyebrow">BORROW</span><h1>Make room to move.</h1><p>Request a loan with clear terms. Your verified Ethereum history signs the eligibility authorization.</p></div>
+        <div><h1>Make room to move.</h1><p>Request a loan with clear terms. Your verified Ethereum history signs the eligibility authorization.</p></div>
         <div className="heading-note"><ShieldCheck size={16} /><span>Default terms<br /><strong>10% interest · 50% guarantee</strong></span></div>
       </div>
 
       <div className="borrow-layout">
-        <section className="content-card borrow-form-card">
-          <div className="card-heading"><div><span className="eyebrow">NEW REQUEST</span><h2>Set your loan terms</h2></div><span className="card-icon"><Sparkles size={17} /></span></div>
-          {!eligibility && <div className="notice notice-neutral"><BadgeCheck size={16} /><span>Start by verifying your wallet history. <Link href="/app/verify">Verify now <ArrowRight size={13} /></Link></span></div>}
-          {eligibility && eligibility.maxLoanUsd === 0 && <div className="notice notice-neutral"><BadgeCheck size={16} /><span>Your observable history does not meet the initial borrowing threshold. The assessment is transparent; there is no guaranteed credit limit.</span></div>}
+        <section className="open-section borrow-form-section">
+          <div className="section-heading"><h2>Set your loan terms</h2></div>
+          {!eligibility && <div className="notice notice-open notice-neutral"><BadgeCheck size={16} /><span>Start by verifying your wallet history. <Link href="/app/verify">Verify now <ArrowRight size={13} /></Link></span></div>}
+          {eligibility && eligibility.maxLoanUsd === 0 && <div className="notice notice-open notice-neutral"><BadgeCheck size={16} /><span>Your observable history does not meet the initial borrowing threshold. The assessment is transparent; there is no guaranteed credit limit.</span></div>}
           <label className="form-label" htmlFor="loan-amount">Loan amount</label>
           <div className="amount-input-wrap amount-input-large"><span>$</span><input id="loan-amount" type="number" min="1" max={eligibility?.maxLoanUsd || undefined} step="1" value={amount} onChange={(event) => setAmount(event.target.value)} /><span>mUSDC</span></div>
           <div className="form-help-row"><span>Up to your estimated limit</span><strong>{eligibility ? "$" + eligibility.maxLoanUsd.toLocaleString() : "Verify history first"}</strong></div>
@@ -166,8 +166,8 @@ export default function BorrowPage() {
             </label>
           </div>
 
-          <div className="terms-box">
-            <div className="terms-heading"><strong>Repayment preview</strong><span className="terms-tag">FLAT RATE</span></div>
+          <div className="repayment-breakdown">
+            <div className="terms-heading"><strong>Repayment preview</strong><span>Flat rate</span></div>
             <div className="terms-line"><span>Loan principal</span><strong>{formatAmount(principalPreview)} mUSDC</strong></div>
             <div className="terms-line"><span>Interest ({interestPercent || "0"}%)</span><strong>{formatAmount(interestPreview)} mUSDC</strong></div>
             <div className="terms-line total"><span>Total repayment</span><strong>{formatAmount(repaymentPreview)} mUSDC</strong></div>
@@ -182,28 +182,28 @@ export default function BorrowPage() {
             {busy ? step : "Create loan request"}
             {!busy && <ArrowRight size={15} />}
           </button>
-          {formError && <div className="notice notice-error">{formError}</div>}
-          {createdLoanId && <div className="notice notice-success"><Check size={15} /><span>Request created. <Link href={"/app/loan/" + createdLoanId}>Share the loan link <ArrowRight size={13} /></Link></span></div>}
+          {formError && <div className="notice notice-open notice-error">{formError}</div>}
+          {createdLoanId && <div className="notice notice-open notice-success"><Check size={15} /><span>Request created. <Link href={"/app/loan/" + createdLoanId}>Share the loan link <ArrowRight size={13} /></Link></span></div>}
           {hash && receipt.isSuccess && <a className="tx-link" href={explorerBaseUrl + "/tx/" + hash} target="_blank" rel="noreferrer">View request on Monad Explorer <ExternalLink size={13} /></a>}
           {error && !formError && <p className="action-error">{"shortMessage" in error ? String(error.shortMessage) : error.message}</p>}
         </section>
 
         <aside className="borrow-side">
-          <div className="content-card borrow-steps-card"><span className="eyebrow">WHAT HAPPENS NEXT</span><h2>A request moves at your pace.</h2>
+          <div className="open-section borrow-steps-section"><h2>A request moves at your pace.</h2>
             <div className="journey-list">
               <Journey number="1" title="Guarantors commit" detail="People you trust can secure part of the request." active />
               <Journey number="2" title="A lender funds it" detail="Funding opens when guarantee coverage is complete." />
               <Journey number="3" title="You repay on time" detail="Your repayment is shared automatically by the contract." />
             </div>
           </div>
-          <div className="content-card estimate-card"><span className="eyebrow">YOUR VERIFIED PROFILE</span>{eligibility ? <><div className="estimate-row"><div className="score-ring small"><span>{eligibility.score}</span><small>/100</small></div><div><strong>History score</strong><span>{eligibility.history.transactionCount.toLocaleString()} observed transactions</span></div></div><Link href="/app/verify" className="inline-link">Review assessment <ArrowRight size={13} /></Link></> : <><p>Wallet history gives lenders context about your onchain activity.</p><Link href="/app/verify" className="inline-link">Verify your history <ArrowRight size={13} /></Link></>}</div>
+          <div className="open-section estimate-summary">{eligibility ? <><div className="estimate-row"><div className="score-ring small"><span>{eligibility.score}</span><small>/100</small></div><div><strong>History score</strong><span>{eligibility.history.transactionCount.toLocaleString()} observed transactions</span></div></div><Link href="/app/verify" className="inline-link">Review assessment <ArrowRight size={13} /></Link></> : <><h3>Your verified profile</h3><p>Wallet history gives lenders context about your onchain activity.</p><Link href="/app/verify" className="inline-link">Verify your history <ArrowRight size={13} /></Link></>}</div>
         </aside>
       </div>
 
       <section className="section-block">
-        <div className="section-heading-row"><div><span className="eyebrow">YOUR BORROWING</span><h2>Loan requests & repayments</h2></div><span className="result-count">{loading ? "Updating…" : myLoans.length + (myLoans.length === 1 ? " loan" : " loans")}</span></div>
-        {myLoans.length ? <div className="loan-grid">{myLoans.map((loan) => <LoanCard key={loan.id} loan={loan} action={loan.status === "Active" && address?.toLowerCase() === loan.borrower.toLowerCase() ? <LoanTransaction action="repay" loan={loan} onSuccess={refresh} compact /> : undefined} />)}</div> :
-          <div className="empty-card compact-empty"><span className="empty-icon"><BadgeCheck size={19} /></span><h3>No borrowing activity yet</h3><p>After the loan is created, its guarantee progress and repayment status will appear here.</p></div>}
+        <div className="section-heading-row"><div><h2>Loan requests & repayments</h2></div><span className="result-count">{loading ? "Updating…" : myLoans.length + (myLoans.length === 1 ? " loan" : " loans")}</span></div>
+        {myLoans.length ? <div className="loan-list">{myLoans.map((loan) => <LoanRow key={loan.id} loan={loan} action={loan.status === "Active" && address?.toLowerCase() === loan.borrower.toLowerCase() ? <LoanTransaction action="repay" loan={loan} onSuccess={refresh} compact /> : undefined} />)}</div> :
+          <div className="empty-state compact-empty"><h3>No borrowing activity yet</h3><p>After the loan is created, its guarantee progress and repayment status will appear here.</p></div>}
       </section>
     </div>
   );

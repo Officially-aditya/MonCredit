@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, BadgeCheck, CircleDollarSign, Clock3, HandCoins, ShieldCheck, Sparkles, Wallet } from "lucide-react";
+import { ArrowRight, BadgeCheck, CircleDollarSign, Clock3, HandCoins, Info, ShieldCheck, Wallet } from "lucide-react";
 import { formatUnits } from "viem";
 import { useAccount, useReadContract } from "wagmi";
-import { LoanCard } from "@/components/loan-card";
+import { LoanRow } from "@/components/loan-row";
 import { WalletTools } from "@/components/wallet-tools";
 import { useMarketLoans } from "@/components/market-hooks";
 import { creditMarketAbi, creditMarketAddress } from "@/lib/market";
@@ -48,11 +48,11 @@ export default function DashboardPage() {
   return (
     <div className="workspace-page">
       <div className="page-heading dashboard-heading">
-        <div><span className="eyebrow">YOUR MONCREDIT</span><h1>Good to see you<span className="heading-period">.</span></h1><p>One clear view of the credit you’re building onchain.</p></div>
+        <div><h1>Good to see you<span className="heading-period">.</span></h1><p>One clear view of the credit you’re building onchain.</p></div>
         <Link href="/app/borrow" className="button button-primary"><Wallet size={16} /> Request a loan</Link>
       </div>
 
-      {!creditMarketAddress && <div className="notice notice-neutral"><Sparkles size={16} /><span><strong>Testnet app setup</strong> — deploy CreditMarket and MockUSDC, then add their addresses to .env.local to enable live reads and transactions.</span></div>}
+      {!creditMarketAddress && <div className="notice notice-open notice-neutral"><Info size={16} /><span><strong>Testnet setup</strong> — deploy CreditMarket and MockUSDC, then add their addresses to .env.local to enable live reads and transactions.</span></div>}
 
       <div className="metric-grid">
         <Metric icon={<CircleDollarSign size={17} />} label="Available to borrow" value={eligibility ? "$" + eligibility.maxLoanUsd.toLocaleString() : "—"} foot={eligibility ? "Based on your verified profile" : "Verify your Ethereum history"} tone="violet" />
@@ -62,12 +62,12 @@ export default function DashboardPage() {
       </div>
 
       <div className="dashboard-grid">
-        <section className="content-card wallet-panel">
-          <div className="card-heading"><div><span className="eyebrow">WALLET</span><h2>Your test funds</h2></div><span className="card-icon"><Wallet size={17} /></span></div>
+        <section className="open-section wallet-panel">
+          <div className="section-heading"><h2>Your test funds</h2></div>
           <WalletTools />
         </section>
-        <section className="content-card credit-panel">
-          <div className="card-heading"><div><span className="eyebrow">CREDIT PROFILE</span><h2>{eligibility ? "History verified" : "Start with your history"}</h2></div><span className="card-icon"><BadgeCheck size={17} /></span></div>
+        <section className="open-section credit-panel">
+          <div className="section-heading"><h2>{eligibility ? "History verified" : "Start with your history"}</h2></div>
           {eligibility ? (
             <div className="profile-content">
               <div className="score-block"><div className="score-ring"><span>{eligibility.score}</span><small>/100</small></div><div><strong>History score</strong><span>{eligibility.history.transactionCount.toLocaleString()} observed transactions · {eligibility.history.activeMonths} active months</span></div></div>
@@ -81,10 +81,10 @@ export default function DashboardPage() {
       </div>
 
       <section className="section-block">
-        <div className="section-heading-row"><div><span className="eyebrow">YOUR POSITIONS</span><h2>Recent activity</h2></div><Link href="/app/lend" className="inline-link">Explore loans <ArrowRight size={14} /></Link></div>
-        {recent.length ? <div className="loan-grid">{recent.map((loan) => <LoanCard key={loan.id} loan={loan} action={loan.status === "Active" && address?.toLowerCase() === loan.borrower.toLowerCase() ? <Link className="inline-link" href={"/app/loan/" + loan.id}>{loan.dueAt <= Math.floor(Date.now() / 1_000) ? "Settle default" : "Repay loan"} <ArrowRight size={13} /></Link> : undefined} />)}</div> : (
-          <div className="empty-card">
-            {loading ? <div className="loader-row"><span className="spinner" /> Reading Monad testnet…</div> : <><span className="empty-icon"><Clock3 size={20} /></span><h3>Your activity will show up here</h3><p>Once you borrow, guarantee, or fund a loan, its onchain status appears in this workspace.</p><Link href="/app/lend" className="inline-link">Browse the lending market <ArrowRight size={14} /></Link></>}
+        <div className="section-heading-row"><div><h2>Recent activity</h2></div><Link href="/app/lend" className="inline-link">Explore loans <ArrowRight size={14} /></Link></div>
+        {recent.length ? <div className="loan-list">{recent.map((loan) => <LoanRow key={loan.id} loan={loan} action={loan.status === "Active" && address?.toLowerCase() === loan.borrower.toLowerCase() ? <Link className="inline-link" href={"/app/loan/" + loan.id}>{loan.dueAt <= Math.floor(Date.now() / 1_000) ? "Settle default" : "Repay loan"} <ArrowRight size={13} /></Link> : undefined} />)}</div> : (
+          <div className="empty-state">
+            {loading ? <div className="loader-row"><span className="spinner" /> Reading Monad testnet…</div> : <><h3>Your activity will show up here</h3><p>Once you borrow, guarantee, or fund a loan, its onchain status appears in this workspace.</p><Link href="/app/lend" className="inline-link">Browse the lending market <ArrowRight size={14} /></Link></>}
           </div>
         )}
       </section>
@@ -101,7 +101,7 @@ export default function DashboardPage() {
 }
 
 function Metric({ icon, label, value, foot, tone }: { icon: React.ReactNode; label: string; value: string; foot: string; tone: string }) {
-  return <article className="metric-card"><span className={"metric-icon " + tone}>{icon}</span><span className="metric-label">{label}</span><strong className="metric-value">{value}</strong><span className="metric-foot">{foot}</span></article>;
+  return <article className="metric"><span className={"metric-icon " + tone}>{icon}</span><span className="metric-label">{label}</span><strong className="metric-value">{value}</strong><span className="metric-foot">{foot}</span></article>;
 }
 
 function formatUsd(amount: bigint) {

@@ -8,7 +8,7 @@ import { formatUnits } from "viem";
 import { useAccount, usePublicClient } from "wagmi";
 import { LoanTransaction } from "@/components/loan-transaction";
 import { StatusPill } from "@/components/status-pill";
-import { shortAddress } from "@/components/loan-card";
+import { shortAddress } from "@/components/loan-row";
 import { creditMarketAddress, type LoanRecord } from "@/lib/market";
 import { fetchLoan } from "@/lib/market-data";
 import { explorerBaseUrl } from "@/lib/chain";
@@ -51,7 +51,7 @@ export default function LoanDetailsPage() {
   }
 
   if (loading) return <div className="workspace-page"><div className="loader-row"><span className="spinner" /> Loading loan from Monad testnet…</div></div>;
-  if (!loan) return <div className="workspace-page"><Link href="/app/lend" className="inline-link"><ArrowLeft size={14} /> Back to lending</Link><div className="empty-card"><h2>Loan not found</h2><p>Check the link or connect to the network where this request was created.</p></div></div>;
+  if (!loan) return <div className="workspace-page"><Link href="/app/lend" className="inline-link"><ArrowLeft size={14} /> Back to lending</Link><div className="empty-state"><h2>Loan not found</h2><p>Check the link or connect to the network where this request was created.</p></div></div>;
 
   const principal = Number(formatUnits(loan.principal, 6));
   const totalInterest = loan.principal * BigInt(loan.interestBps) / 10_000n;
@@ -68,16 +68,16 @@ export default function LoanDetailsPage() {
     <div className="workspace-page">
       <Link href="/app/lend" className="back-link"><ArrowLeft size={14} /> Back to market</Link>
       <div className="page-heading loan-detail-heading">
-        <div><span className="eyebrow">LOAN #{loan.id.padStart(4, "0")}</span><h1>{"$"}{principal.toLocaleString("en-US", { maximumFractionDigits: 2 })} mUSDC request</h1><p>Review the borrower, guarantee pool, and repayment split before taking action.</p></div>
+        <div><p className="loan-number">Loan #{loan.id.padStart(4, "0")}</p><h1>{"$"}{principal.toLocaleString("en-US", { maximumFractionDigits: 2 })} mUSDC request</h1><p>Review the borrower, guarantee pool, and repayment split before taking action.</p></div>
         <div className="loan-detail-actions"><StatusPill status={loan.status} /><button className="button button-secondary button-small" onClick={copyLink}>{copied ? <Check size={14} /> : <Clipboard size={14} />}{copied ? "Link copied" : "Share request"}</button></div>
       </div>
 
-      {!creditMarketAddress && <div className="notice notice-neutral">Connect the deployed market contract address to load this request from Monad testnet.</div>}
+      {!creditMarketAddress && <div className="notice notice-open notice-neutral">Connect the deployed market contract address to load this request from Monad testnet.</div>}
 
       <div className="loan-detail-grid">
         <div className="loan-detail-primary">
-          <section className="content-card loan-overview-card">
-            <div className="loan-overview-amount"><span>REQUESTED PRINCIPAL</span><strong>{"$"}{principal.toLocaleString("en-US", { maximumFractionDigits: 2 })}</strong><small>mUSDC</small></div>
+          <section className="open-section loan-overview-section">
+            <div className="loan-overview-amount"><span>Requested principal</span><strong>{"$"}{principal.toLocaleString("en-US", { maximumFractionDigits: 2 })}</strong><small>mUSDC</small></div>
             <div className="loan-overview-stats">
               <DetailFact icon={<Clock3 size={15} />} label="Repayment term" value={loan.dueAt ? formatDate(loan.dueAt) : Math.ceil(loan.durationSeconds / 86_400) + " days after funding"} />
               <DetailFact icon={<HandCoins size={15} />} label="Interest rate" value={(loan.interestBps / 100).toFixed(1) + "% flat"} />
@@ -87,8 +87,8 @@ export default function LoanDetailsPage() {
             </div>
           </section>
 
-          <section className="content-card borrower-history-card">
-            <div className="card-heading"><div><span className="eyebrow">BORROWER HISTORY</span><h2>Snapshot at request time</h2></div><span className="card-icon"><Shield size={17} /></span></div>
+          <section className="open-section borrower-history-section">
+            <div className="section-heading"><h2>Borrower history at request time</h2></div>
             <div className="borrower-history-body">
               <div className="score-ring large"><span>{loan.eligibilityScore}</span><small>/100</small></div>
               <div className="borrower-history-metrics">
@@ -102,8 +102,8 @@ export default function LoanDetailsPage() {
             <div className="history-hash"><span>History fingerprint</span><code title={loan.historyHash}>{loan.historyHash}</code></div>
           </section>
 
-          <section className="content-card guarantee-detail-card">
-            <div className="card-heading"><div><span className="eyebrow">GUARANTEE POOL</span><h2>Collateral commitments</h2></div><span className="card-icon"><Shield size={17} /></span></div>
+          <section className="open-section guarantee-detail-section">
+            <div className="section-heading"><h2>Collateral commitments</h2></div>
             <div className="pool-amounts"><div><span>Committed</span><strong>{formatMoney(loan.guaranteeTotal)} <small>mUSDC</small></strong></div><div><span>Coverage target</span><strong>{formatMoney(loan.requiredGuarantee)} <small>mUSDC</small></strong></div></div>
             <div className="progress-track detail-progress"><span style={{ width: (loan.requiredGuarantee ? Number(loan.guaranteeTotal * 100n / loan.requiredGuarantee) : 0) + "%" }} /></div>
             <div className="progress-foot"><span>{loan.guarantees.length} guarantor{loan.guarantees.length === 1 ? "" : "s"}</span><span>{loan.requiredGuarantee ? Number(loan.guaranteeTotal * 100n / loan.requiredGuarantee) : 0}% secured</span></div>
@@ -112,8 +112,8 @@ export default function LoanDetailsPage() {
             {alreadyGuaranteed && loan.status === "Open" && <p className="small-note">You have already committed to this guarantee pool. Additional commitments are available from the same request page.</p>}
           </section>
 
-          <section className="content-card repayment-detail-card">
-            <div className="card-heading"><div><span className="eyebrow">REPAYMENT SPLIT</span><h2>Where the interest goes</h2></div></div>
+          <section className="open-section repayment-detail-section">
+            <div className="section-heading"><div><h2>Where the interest goes</h2></div></div>
             <div className="repayment-total"><span>Borrower repays</span><strong>{formatMoney(loan.principal + totalInterest)} mUSDC</strong></div>
             <div className="repayment-distribution">
               <div><span className="distribution-dot lender-dot" /><span>Lender receives</span><strong>{formatMoney(loan.principal + lenderInterest)} mUSDC</strong><small>Principal + {formatMoney(lenderInterest)} interest</small></div>
@@ -124,13 +124,13 @@ export default function LoanDetailsPage() {
         </div>
 
         <aside className="loan-detail-side">
-          <section className="content-card participants-card">
-            <div className="card-heading"><div><span className="eyebrow">PARTICIPANTS</span><h2>Loan parties</h2></div></div>
+          <section className="open-section participants-section">
+            <div className="section-heading"><div><h2>Loan parties</h2></div></div>
             <Participant icon={<Wallet size={15} />} role="Borrower" address={loan.borrower} />
             <Participant icon={<HandCoins size={15} />} role="Lender" address={loan.lender} />
           </section>
-          <section className="content-card action-panel">
-            <div className="card-heading"><div><span className="eyebrow">NEXT STEP</span><h2>{actionTitle(loan.status, expiredRequest, due, borrowerOwns)}</h2></div></div>
+          <section className="open-section action-panel">
+            <div className="section-heading"><div><h2>{actionTitle(loan.status, expiredRequest, due, borrowerOwns)}</h2></div></div>
             {loan.status === "Open" && !expiredRequest && (
               <div className="available-actions">
                 {loan.guaranteeTotal >= loan.requiredGuarantee && !borrowerOwns && !alreadyGuaranteed && loan.lender === "0x0000000000000000000000000000000000000000" && <LoanTransaction action="fund" loan={loan} onSuccess={refresh} />}

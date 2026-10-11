@@ -4,22 +4,22 @@ import { formatUnits } from "viem";
 import type { LoanRecord } from "@/lib/market";
 import { StatusPill } from "@/components/status-pill";
 
-export function LoanCard({ loan, action }: { loan: LoanRecord; action?: React.ReactNode }) {
+export function LoanRow({ loan, action }: { loan: LoanRecord; action?: React.ReactNode }) {
   const principal = Number(formatUnits(loan.principal, 6));
   const coverage = loan.principal === 0n ? 0 : Number((loan.guaranteeTotal * 100n) / loan.principal);
   const progress = loan.requiredGuarantee === 0n ? 0 : Math.min(100, Number((loan.guaranteeTotal * 100n) / loan.requiredGuarantee));
   const unsecured = loan.principal > loan.requiredGuarantee ? loan.principal - loan.requiredGuarantee : 0n;
   const termDays = Math.ceil(loan.durationSeconds / 86_400);
   return (
-    <article className="loan-card">
-      <div className="loan-card-head">
+    <article className="loan-row">
+      <div className="loan-row-head">
         <div>
-          <div className="loan-id-row"><span className="loan-id">LOAN #{loan.id.padStart(4, "0")}</span><StatusPill status={loan.status} /></div>
-          <Link href={"/app/loan/" + loan.id} className="loan-card-title"><span>{"$"}{principal.toLocaleString("en-US", { maximumFractionDigits: 2 })} mUSDC request</span><ArrowRight size={15} /></Link>
+          <div className="loan-id-row"><span className="loan-id">Loan #{loan.id.padStart(4, "0")}</span><StatusPill status={loan.status} /></div>
+          <Link href={"/app/loan/" + loan.id} className="loan-row-title"><span>{"$"}{principal.toLocaleString("en-US", { maximumFractionDigits: 2 })} mUSDC request</span><ArrowRight size={15} /></Link>
         </div>
         <div className="loan-amount"><strong>{"$"}{principal.toLocaleString("en-US", { maximumFractionDigits: 2 })}</strong><small>principal</small></div>
       </div>
-      <div className="loan-card-meta">
+      <div className="loan-row-meta">
         <div><span>Borrower</span><strong>{shortAddress(loan.borrower)}</strong></div>
         <div><span>Interest</span><strong>{(loan.interestBps / 100).toFixed(1)}% total</strong></div>
         <div><span>Coverage</span><strong>{coverage}% secured</strong></div>
@@ -34,7 +34,7 @@ export function LoanCard({ loan, action }: { loan: LoanRecord; action?: React.Re
           <div className="progress-foot"><span>{"$"}{Number(formatUnits(loan.guaranteeTotal, 6)).toLocaleString()} committed</span><span>{"$"}{Number(formatUnits(loan.requiredGuarantee, 6)).toLocaleString()} target</span></div>
         </div>
       )}
-      {action && <div className="loan-card-action">{action}</div>}
+      {action && <div className="loan-row-action">{action}</div>}
     </article>
   );
 }

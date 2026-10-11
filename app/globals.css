@@ -606,3 +606,287 @@ a { color: inherit; text-decoration: none; }
   .loan-contract-link > span:last-child { margin-left: 0; flex: 1 0 100%; }
   .app-footer { gap: 8px; flex-direction: column; }
 }
+/* Open editorial layout */
+
+
+.network-status { display: flex; align-items: center; gap: 9px; padding: 12px 8px; border-top: 1px solid #eeecf0; }
+.network-status > div { display: flex; flex-direction: column; gap: 4px; }
+.network-status strong { color: #494650; font-size: 10px; font-weight: 650; }
+.network-status small { color: #99959f; font-size: 8px; }
+.sidebar-top .brand-lockup { margin-bottom: 30px; }
+
+.open-section {
+  padding: 22px 0;
+  border: 0;
+  border-top: 1px solid #e7e4eb;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.open-section > .section-heading { margin-bottom: 17px; }
+.section-heading { align-items: baseline; }
+.section-heading h2 { font-size: 18px; }
+.section-heading h3 { font-size: 16px; }
+.section-heading-row { margin-bottom: 12px; }
+.section-heading-row h2 { margin: 0; font-size: 20px; }
+.section-heading-row > div { display: flex; align-items: baseline; gap: 14px; }
+.open-section .section-description { max-width: 600px; }
+
+.notice-open {
+  margin: 16px 0;
+  padding: 8px 0 8px 12px;
+  border: 0;
+  border-left: 2px solid #cfc8e9;
+  border-radius: 0;
+  background: transparent;
+}
+.notice-open.notice-error { border-left-color: #d58c95; }
+.notice-open.notice-success { border-left-color: #78b89f; }
+
+.metric-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 28px 0 14px;
+  padding: 20px 0;
+  border-top: 1px solid #e7e4eb;
+  border-bottom: 1px solid #e7e4eb;
+}
+.metric {
+  min-height: 115px;
+  padding: 0 21px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 0;
+  border-right: 1px solid #e7e4eb;
+  border-radius: 0;
+  background: transparent;
+}
+.metric:first-child { padding-left: 0; }
+.metric:last-child { border-right: 0; }
+.metric-icon {
+  width: auto;
+  height: auto;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: transparent !important;
+}
+.metric-value { margin-top: 6px; }
+.metric-label { font-size: 10px; }
+.metric-foot { font-size: 9px; }
+
+.loan-list { display: block; }
+.loan-row {
+  padding: 20px 0;
+  border: 0;
+  border-bottom: 1px solid #e7e4eb;
+  border-radius: 0;
+  background: transparent;
+}
+.loan-row-head { display: flex; justify-content: space-between; gap: 12px; }
+.loan-id { color: #827d88; font-size: 10px; font-weight: 560; letter-spacing: 0; }
+.loan-row-meta { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.loan-row-meta span, .loan-history-summary small { font-size: 9px; }
+.loan-row-meta strong { font-size: 10px; }
+.loan-row-title { margin-top: 8px; display: inline-flex; align-items: center; gap: 5px; color: #34313b; font-size: 14px; font-weight: 660; }
+.loan-row-title svg { color: #8f87ac; }
+.history-score { min-width: 30px; height: auto; border: 0; border-radius: 0; background: transparent; font-size: 13px; }
+.loan-row-action { margin-top: 12px; }
+.loan-row-action .transaction-control.compact { display: flex; align-items: flex-end; gap: 9px; }
+.loan-row-action .transaction-control.compact .transaction-amount-label { flex: 1; }
+.guarantee-position-note {
+  padding: 9px 0;
+  border-top: 1px solid #efedf2;
+  border-radius: 0;
+  background: transparent;
+}
+
+.empty-state {
+  min-height: 0;
+  padding: 23px 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+  border: 0;
+  border-top: 1px solid #e7e4eb;
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+}
+.empty-state h3 { margin: 0 0 6px; font-size: 14px; }
+.empty-state p { max-width: 480px; font-size: 11px; }
+.empty-state.compact-empty { min-height: 0; }
+
+.verify-grid, .assessment-grid { gap: 25px; }
+.verify-grid > .open-section:nth-child(2),
+.assessment-grid > .assessment-side { border-left: 1px solid #e7e4eb; padding-left: 25px; }
+.address-binding {
+  padding: 12px 0;
+  border: 0;
+  border-top: 1px solid #efedf2;
+  border-bottom: 1px solid #efedf2;
+  border-radius: 0;
+  background: transparent;
+}
+.binding-icon, .method-item > span {
+  width: 18px;
+  height: 18px;
+  flex-basis: 18px;
+  place-items: start;
+  border-radius: 0;
+  background: transparent;
+}
+.method-list { gap: 16px; }
+.method-item > span { background: transparent; }
+.method-callout {
+  padding: 8px 0 8px 13px;
+  border-left: 2px solid #c8bdf8;
+  border-radius: 0;
+  background: transparent;
+}
+.address-binding {
+  padding: 12px 0;
+  border: 0;
+  border-top: 1px solid #e7e4eb;
+  border-bottom: 1px solid #e7e4eb;
+  border-radius: 0;
+  background: transparent;
+}
+.binding-icon, .balance-icon {
+  width: auto;
+  height: auto;
+  display: inline-flex;
+  color: #7965e6;
+  border-radius: 0;
+  background: transparent;
+}
+.guarantee-position-note {
+  padding: 9px 0;
+  border-top: 1px solid #e7e4eb;
+  border-radius: 0;
+  background: transparent;
+}
+.journey-item > span {
+  width: auto;
+  height: auto;
+  flex: 0 0 27px;
+  display: block;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.journey-item.active > span { color: #6e59d6; background: transparent; }
+.method-callout {
+  padding: 9px 0 9px 13px;
+  border-left: 2px solid #c8bdf8;
+  border-radius: 0;
+  background: transparent;
+}
+.credit-limit-section {
+  padding: 16px 0;
+  border-top: 1px solid #efedf2;
+  border-bottom: 1px solid #efedf2;
+  background: transparent;
+}
+.credit-limit-section > h3 { margin: 0 0 4px; color: #77727f; font-size: 11px; font-weight: 620; }
+.credit-limit-section > strong { margin-top: 0; }
+.credit-limit-section > span { margin-top: 3px; color: #918c99; font-size: 10px; }
+.limit-divider { display: none; }
+.history-facts { padding: 0; }
+.snapshots-section { padding: 18px 0; }
+
+.borrow-layout { gap: 28px; }
+.borrow-side { gap: 20px; }
+.borrow-steps-section, .estimate-summary, .borrow-form-section { padding: 22px 0; }
+.repayment-breakdown {
+  margin-top: 20px;
+  padding: 13px 0;
+  border: 0;
+  border-top: 1px solid #e7e4eb;
+  border-bottom: 1px solid #e7e4eb;
+  border-radius: 0;
+  background: transparent;
+}
+.terms-heading { margin-bottom: 9px; }
+.terms-heading > span { color: #8f8995; font-size: 10px; }
+.terms-box > p, .repayment-breakdown > p { font-size: 9px; }
+
+.lender-explainer {
+  grid-template-columns: 2px 1fr auto;
+  gap: 15px;
+  margin-bottom: 28px;
+  padding: 20px 0;
+  border-bottom: 1px solid #e7e4eb;
+  background: transparent;
+}
+.explainer-rule { width: 2px; height: 38px; background: #8e7bea; }
+.explainer-potential { min-width: 155px; }
+
+.loan-overview-section, .borrower-history-section,
+.guarantee-detail-section, .repayment-detail-section,
+.participants-section, .action-panel { padding: 22px 0; }
+.loan-overview-amount { border-bottom-color: #e7e4eb; }
+.loan-overview-amount > span { color: #77727f; font-size: 10px; font-weight: 550; letter-spacing: 0; }
+.detail-fact > span, .participant-icon, .guarantor-avatar {
+  width: auto;
+  height: auto;
+  background: transparent;
+  border-radius: 0;
+}
+.detail-fact > span { color: #7764df; }
+.guarantor-avatar { color: #836ef0; }
+.participant-row { border-color: #e7e4eb; }
+.repayment-total {
+  margin: 15px 0 12px;
+  padding: 11px 0;
+  border-top: 1px solid #efedf2;
+  border-bottom: 1px solid #efedf2;
+  border-radius: 0;
+  background: transparent;
+}
+.repayment-distribution { gap: 0; }
+.repayment-distribution > div {
+  min-height: 0;
+  padding: 8px 14px;
+  border: 0;
+  border-left: 1px solid #e7e4eb;
+  border-radius: 0;
+  background: transparent;
+}
+.repayment-distribution > div:first-child { border-left: 0; padding-left: 0; }
+.repayment-distribution > div:last-child { padding-right: 0; }
+.loan-number { margin: 0 0 7px; color: #77727f; font-size: 11px; }
+.value-label { display: block; margin-bottom: 5px; color: #77727f; font-size: 11px; }
+.guarantee-summary { display: grid; grid-template-columns: 1fr minmax(220px, .7fr); gap: 20px; align-items: center; }
+.guarantee-summary > div:first-child > strong { color: #35313b; font-size: 26px; font-weight: 660; letter-spacing: -.8px; }
+.guarantee-summary > div:first-child > p { margin: 6px 0 0; color: #85818c; font-size: 11px; }
+.summary-risk { display: flex; align-items: flex-start; gap: 8px; padding-left: 14px; border-left: 1px solid #e7e4eb; color: #8a6670; font-size: 10px; line-height: 1.6; }
+.summary-risk svg { flex: 0 0 14px; }
+
+@media (max-width: 820px) {
+  .verify-grid > .open-section:nth-child(2), .assessment-grid > .assessment-side {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .metric { padding: 0 14px; }
+  .loan-row-meta { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .metric-grid { grid-template-columns: 1fr 1fr; }
+  .metric { min-height: 112px; padding: 12px 14px; border-bottom: 1px solid #e7e4eb; }
+  .metric:nth-child(2) { border-right: 0; }
+  .metric:nth-child(3) { padding-left: 0; }
+  .metric:nth-child(n+3) { border-bottom: 0; }
+  .loan-row { padding: 17px 0; }
+  .loan-row-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .guarantee-summary { grid-template-columns: 1fr; }
+  .summary-risk { padding: 10px 0 0; border-left: 0; border-top: 1px solid #e7e4eb; }
+  .lender-explainer { grid-template-columns: 2px 1fr; }
+  .explainer-potential { grid-column: 2; min-width: 0; padding: 10px 0 0; border: 0; border-top: 1px solid #e7e4eb; }
+  .repayment-distribution { grid-template-columns: 1fr; }
+  .repayment-distribution > div, .repayment-distribution > div:first-child, .repayment-distribution > div:last-child {
+    padding: 12px 0;
+    border-left: 0;
+    border-top: 1px solid #e7e4eb;
+  }
+}

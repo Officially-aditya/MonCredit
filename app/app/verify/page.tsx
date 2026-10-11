@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAccount, useSignMessage } from "wagmi";
 import { getAddress, toHex } from "viem";
-import { ArrowRight, BadgeCheck, Clock3, ExternalLink, FileCheck2, LoaderCircle, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, BadgeCheck, Clock3, ExternalLink, FileCheck2, LoaderCircle, ShieldCheck, Wallet } from "lucide-react";
 import { EligibilityAuthorization, readEligibility } from "@/lib/eligibility";
 
 export default function VerifyPage() {
@@ -79,33 +79,33 @@ export default function VerifyPage() {
   return (
     <div className="workspace-page">
       <div className="page-heading">
-        <div><span className="eyebrow">PROOF OF WEALTH</span><h1>Your history,<br className="mobile-break" /> explained.</h1><p>Check activity on Ethereum and get a clear, signed borrowing limit for your Monad wallet.</p></div>
+        <div><h1>Your history,<br className="mobile-break" /> explained.</h1><p>Check activity on Ethereum and get a clear, signed borrowing limit for your Monad wallet.</p></div>
         <div className="heading-note"><ShieldCheck size={16} /><span>Read-only check<br /><strong>No token approval required</strong></span></div>
       </div>
 
       <div className="verify-grid">
-        <section className="content-card verify-form-card">
-          <div className="card-heading"><div><span className="eyebrow">WALLET OWNERSHIP</span><h2>Link your Ethereum history</h2></div><span className="card-icon"><FileCheck2 size={17} /></span></div>
-          <p className="card-description">Sign a one-time message to prove you control this Ethereum wallet and authorize its association with your connected Monad borrowing wallet.</p>
+        <section className="open-section verify-form-section">
+          <div className="section-heading"><h2>Link your Ethereum history</h2></div>
+          <p className="section-description">Sign a one-time message to prove you control this Ethereum wallet and authorize its association with your connected Monad borrowing wallet.</p>
           <label className="form-label" htmlFor="eth-address">Ethereum wallet address</label>
           <input id="eth-address" className="form-input" value={ethereumAddress} onChange={(event) => setEthereumAddress(event.target.value)} placeholder="0x…" autoComplete="off" spellCheck={false} />
           <div className="address-binding"><span className="binding-icon"><BadgeCheck size={16} /></span><div><small>Borrowing wallet on Monad</small><strong>{address ? address : "Connect a wallet to continue"}</strong></div></div>
           <div className="signature-note"><ShieldCheck size={14} /><span>The signature is only proof of ownership. It does not authorize token transfers or spend your funds. If this is a different address, your browser wallet will ask to sign with that account.</span></div>
           <button className="button button-primary button-full" onClick={verify} disabled={busy || !address}>
-            {busy ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}
+            {busy ? <LoaderCircle className="spin" size={16} /> : <BadgeCheck size={16} />}
             {busy ? step : "Verify history"}
             {!busy && <ArrowRight size={15} />}
           </button>
-          {error && <div className="notice notice-error">{error}</div>}
-          {step && !busy && !error && <div className="notice notice-success"><CheckMark />{step}</div>}
+          {error && <div className="notice notice-open notice-error">{error}</div>}
+          {step && !busy && !error && <div className="notice notice-open notice-success"><CheckMark />{step}</div>}
         </section>
 
-        <aside className="content-card methodology-card">
-          <div className="card-heading"><div><span className="eyebrow">HOW THE ESTIMATE WORKS</span><h2>Signals, not certainty</h2></div></div>
+        <aside className="open-section methodology-section">
+          <div className="section-heading"><div><h2>Signals, not certainty</h2></div></div>
           <div className="method-list">
             <Method icon={<Clock3 size={16} />} title="Wallet age" detail="Time since the earliest observed transaction." />
             <Method icon={<FileCheck2 size={16} />} title="Activity patterns" detail="Transaction count and active calendar months." />
-            <Method icon={<Sparkles size={16} />} title="Supported assets" detail="Historical USDC, DAI, and WETH transfers and sampled balances." />
+            <Method icon={<Wallet size={16} />} title="Supported assets" detail="Historical USDC, DAI, and WETH transfers and sampled balances." />
             <Method icon={<BadgeCheck size={16} />} title="Repayment history" detail="MonCredit repayments and defaults recorded on Monad." />
           </div>
           <div className="method-callout"><strong>What this score means</strong><p>A deterministic estimate of observable activity. It is not a credit bureau score, a promise of repayment, or financial advice.</p></div>
@@ -115,12 +115,12 @@ export default function VerifyPage() {
 
       {eligibility && (
         <section className="section-block assessment-section">
-          <div className="section-heading-row"><div><span className="eyebrow">YOUR ASSESSMENT</span><h2>Verified wallet profile</h2></div><Link href="/app/borrow" className="button button-primary button-small">Continue to borrow <ArrowRight size={14} /></Link></div>
+          <div className="section-heading-row"><div><h2>Verified wallet profile</h2></div><Link href="/app/borrow" className="button button-primary button-small">Continue to borrow <ArrowRight size={14} /></Link></div>
           <div className="assessment-grid">
-            <div className="content-card assessment-score-card">
+            <div className="open-section assessment-score-section">
               <div className="assessment-score">
                 <div className="score-ring large"><span>{eligibility.score}</span><small>/100</small></div>
-                <div><span className="eyebrow">HISTORY SCORE</span><h3>{eligibility.score >= 70 ? "Established activity" : eligibility.score >= 40 ? "Growing activity" : eligibility.score >= 25 ? "Early activity" : "Limited signal"}</h3><p>This estimate summarizes the observable signals shown below.</p></div>
+                <div><h3>{eligibility.score >= 70 ? "Established activity" : eligibility.score >= 40 ? "Growing activity" : eligibility.score >= 25 ? "Early activity" : "Limited signal"}</h3><p>This estimate summarizes the observable signals shown below.</p></div>
               </div>
               <div className="score-breakdown">
                 <ScoreRow label="Wallet age" value={eligibility.scoreParts.walletAge} max={25} />
@@ -132,8 +132,8 @@ export default function VerifyPage() {
               </div>
             </div>
             <div className="assessment-side">
-              <div className="content-card credit-limit-card"><span className="eyebrow">ESTIMATED CREDIT LIMIT</span><strong>{"$"}{eligibility.maxLoanUsd.toLocaleString()}</strong><span>mUSDC · subject to loan terms</span><div className="limit-divider" /><small>Authorization valid until {new Date(Number(eligibility.eligibilityExpiry) * 1_000).toLocaleString()}</small></div>
-              <div className="content-card history-facts">
+              <div className="open-section credit-limit-section"><h3>Estimated borrowing limit</h3><strong>{"$"}{eligibility.maxLoanUsd.toLocaleString()}</strong><span>mUSDC · subject to loan terms</span><div className="limit-divider" /><small>Authorization valid until {new Date(Number(eligibility.eligibilityExpiry) * 1_000).toLocaleString()}</small></div>
+              <div className="open-section history-facts">
                 <Fact label="Wallet age" value={formatAge(eligibility.history.walletAgeDays)} />
                 <Fact label="Observed transactions" value={eligibility.history.transactionCount.toLocaleString()} />
                 <Fact label="Active months" value={eligibility.history.activeMonths.toString()} />
@@ -144,11 +144,11 @@ export default function VerifyPage() {
             </div>
           </div>
           {eligibility.history.historicalHoldings.length > 0 && (
-            <div className="content-card snapshots-card"><div className="card-heading"><div><span className="eyebrow">HISTORICAL BALANCE SAMPLES</span><h3>Selected Ethereum blocks</h3></div></div>
+            <div className="open-section snapshots-section"><div className="section-heading"><div><h3>Selected Ethereum blocks</h3></div></div>
               <div className="snapshot-list">{eligibility.history.historicalHoldings.map((snapshot) => <div key={snapshot.blockNumber} className="snapshot-row"><div><strong>Block {snapshot.blockNumber.toLocaleString()}</strong><span>{snapshot.timestamp ? new Date(snapshot.timestamp).toLocaleDateString() : "Date unavailable"}</span></div><span>{Number(snapshot.nativeEth).toFixed(4)} ETH</span><span>{snapshot.tokens.filter((token) => Number(token.balance) > 0).map((token) => Number(token.balance).toFixed(2) + " " + token.symbol).join(" · ") || "No supported token balance"}</span></div>)}</div>
             </div>
           )}
-          {eligibility.warnings.length > 0 && <div className="notice notice-neutral"><Clock3 size={15} /><span>{eligibility.warnings.join(" ")}</span></div>}
+          {eligibility.warnings.length > 0 && <div className="notice notice-open notice-neutral"><Clock3 size={15} /><span>{eligibility.warnings.join(" ")}</span></div>}
           <p className="method-footnote">Method: {eligibility.history.methodologyVersion}. The asset snapshot shows up to three sampled blocks around observed activity; it does not represent a complete balance timeline. <a href="https://monad.xyz" target="_blank" rel="noreferrer">Learn about Monad <ExternalLink size={11} /></a></p>
         </section>
       )}
