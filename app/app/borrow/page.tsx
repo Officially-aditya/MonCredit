@@ -20,18 +20,22 @@ export default function BorrowPage() {
     <div className="workspace-page">
       <div className="page-heading">
         <div><h1>Your borrowing</h1><p>Track loan requests, guarantee progress, and repayments.</p></div>
-        {myLoans.length > 0 && <button className="button button-primary" onClick={() => setRequestOpen(true)}><span>Request a loan</span><ArrowRight size={15} /></button>}
       </div>
 
       <section className="section-block borrowing-activity">
-        <div className="section-heading-row"><div><h2>Loan activity</h2></div><span className="result-count">{loading ? "Updating…" : myLoans.length + (myLoans.length === 1 ? " loan" : " loans")}</span></div>
+        <div className="section-heading-row">
+          <div><h2>Loan activity</h2></div>
+          <div className="borrow-activity-actions">
+            <span className="result-count">{loading ? "Updating…" : myLoans.length + (myLoans.length === 1 ? " loan" : " loans")}</span>
+            <button className="button button-primary button-small" onClick={() => setRequestOpen(true)}>Request a loan <ArrowRight size={14} /></button>
+          </div>
+        </div>
         {loading ? <div className="loader-row"><span className="spinner" /> Reading Monad testnet…</div> : myLoans.length ? (
           <div className="loan-list">{myLoans.map((loan) => <LoanRow key={loan.id} loan={loan} action={loan.status === "Active" ? <LoanTransaction action="repay" loan={loan} onSuccess={refresh} compact /> : undefined} />)}</div>
         ) : (
           <div className="empty-state compact-empty">
             <h3>No borrowing activity yet</h3>
             <p>Your requests and repayment status will appear here.</p>
-            <button className="button button-primary button-small" onClick={() => setRequestOpen(true)}>Request a loan <ArrowRight size={14} /></button>
           </div>
         )}
       </section>

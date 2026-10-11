@@ -617,6 +617,7 @@ a { color: inherit; text-decoration: none; }
 .section-heading-row { margin-bottom: 12px; }
 .section-heading-row h2 { margin: 0; font-size: 20px; }
 .section-heading-row > div { display: flex; align-items: baseline; gap: 14px; }
+.section-heading-row .borrow-activity-actions { display: flex; align-items: center; gap: 12px; }
 .open-section .section-description { max-width: 600px; }
 
 .notice-open {
