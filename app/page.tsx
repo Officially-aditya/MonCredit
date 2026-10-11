@@ -26,7 +26,6 @@ export default function HomePage() {
             <Link href="/app/verify" className="button button-primary button-large">Check your borrowing power <ArrowRight size={16} /></Link>
             <a href="#how-it-works" className="text-action">See how it works <ArrowDownRight size={15} /></a>
           </div>
-          <div className="hero-proof"><span>Transparent terms</span><span>Non-custodial wallet</span><span>Built on Monad</span></div>
         </div>
 
         <div className="hero-visual">
