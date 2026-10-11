@@ -1,8 +1,8 @@
 # MonCredit logo
 
-## Selected direction: Bridge M
+## Selected direction: Open Credit C
 
-The mark is a custom geometric M whose two sides meet at a short shared span. It represents credit as a relationship between people and a commitment carried together. The silhouette stays legible without relying on a coin, chain, chart, lock, or other finance icon.
+The open C is a direct letterform drawn as an open path rather than a badge or tile. A small mint point sits in the opening as a signal of available credit and shared commitment. The mark is distinct from the previous M monogram and avoids coin, chain, lock, chart, and sparkle imagery.
 
 ## Palette
 
@@ -11,16 +11,15 @@ The mark is a custom geometric M whose two sides meet at a short shared span. It
 - Ink: `#241B3D`
 - White: `#FFFFFF`
 
-Use the full-color horizontal lockup on light surfaces. Use the icon asset in compact headers and app contexts. The dark and light files are single-color versions for constrained or reversed use. Keep the SVGs at their declared proportions and preserve their transparent backgrounds.
+Use the full-color horizontal lockup on light surfaces. Use the icon asset in compact headers and app contexts. The dark and light files are one-color versions. Keep the SVGs at their declared proportions and preserve their transparent backgrounds.
 
 ## Typography
 
-The editable SVG wordmark uses `Geist` at weight 650, with `Inter`, `Arial`, and sans-serif fallbacks. The MonCredit web app loads Geist. Text in the portable horizontal SVG remains live text rather than outlined paths so it can be edited; a renderer without Geist may use its fallback font.
+The editable SVG wordmark uses `Geist` at weight 650, with `Inter`, `Arial`, and sans-serif fallbacks. The MonCredit app loads Geist. Text remains editable, so a renderer without Geist may use its fallback font.
 
 ## Files
 
 - Production SVGs: `public/brand/`
-- Three concept marks: `logos/moncredit/concepts/`
-- Comparison and scale previews: `logos/moncredit/preview/`
+- Rendered size and background preview: `logos/moncredit/preview/`
 
-The selected logo is an original design; this work does not include trademark clearance.
+This is an original design; this work does not include trademark clearance.

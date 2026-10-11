@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="span-title span-desc">
-  <title id="span-title">Mutual Span</title>
-  <desc id="span-desc">Two upright forms support a short shared span, expressing reciprocal backing.</desc>
-  <g id="mutual-span-mark" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M17 47V22C17 18 20 15 24 15H25C29 15 32 18 32 22V47M32 47V22C32 18 35 15 39 15H40C44 15 47 18 47 22V47" stroke="#7458EE" stroke-width="7"/>
-    <path d="M26 34H38" stroke="#55D6B0" stroke-width="6"/>
-  </g>
-</svg>

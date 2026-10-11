@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="ledger-title ledger-desc">
-  <title id="ledger-title">Open Ledger</title>
-  <desc id="ledger-desc">Two ledger pages meet at a central mint spine, an abstract mark for shared credit records.</desc>
-  <g id="ledger-mark" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M13 18C21 17 27 20 32 26C37 20 43 17 51 18V46C43 45 37 48 32 53C27 48 21 45 13 46V18Z" stroke="#7458EE" stroke-width="5"/>
-    <path d="M32 27V49" stroke="#55D6B0" stroke-width="5"/>
-    <path d="M19 26C22 26 24 27 26 29M38 29C40 27 42 26 45 26M19 38C22 38 24 39 26 41M38 41C40 39 42 38 45 38" stroke="#7458EE" stroke-width="3"/>
-  </g>
-</svg>

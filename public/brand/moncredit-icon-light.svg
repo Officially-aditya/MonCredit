@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="moncredit-icon-light-title moncredit-icon-light-desc">
   <title id="moncredit-icon-light-title">MonCredit light icon</title>
-  <desc id="moncredit-icon-light-desc">A white geometric M with a shared span, for use on dark backgrounds.</desc>
-  <path id="moncredit-light-mark" d="M14 48V18L32 36L50 18V48" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M27.5 36H36.5" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+  <desc id="moncredit-icon-light-desc">A white open C with a point in its opening, for use on dark backgrounds.</desc>
+  <path id="moncredit-light-mark" d="M50 10H29C17 10 9 20 9 32S17 54 29 54H50" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="60" cy="32" r="3.8" fill="#FFFFFF"/>
 </svg>
