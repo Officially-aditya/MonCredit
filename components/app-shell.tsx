@@ -42,10 +42,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
         </div>
         <div className="sidebar-bottom">
-          <div className="network-status">
-            <span className="network-indicator" />
-            <div><strong>Monad testnet</strong><small>mUSDC lending · test mode</small></div>
-          </div>
           <a className="sidebar-help" href="https://docs.monad.xyz/" target="_blank" rel="noreferrer">
             <LifeBuoy size={16} /><span>Help & resources</span><ArrowUpRight size={13} />
           </a>
