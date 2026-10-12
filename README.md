@@ -6,11 +6,15 @@ Borrowers can request a loan, guarantors can lock part of the required collatera
 
 ## Stack
 
-- Next.js App Router, TypeScript, and CSS
+- Next.js App Router, TypeScript, CSS, and Lucide React
 - wagmi, viem, and RainbowKit
 - Solidity 0.8.26, Foundry, and OpenZeppelin Contracts
 - Monad testnet, chain ID 10143
 - Ethereum mainnet history through Alchemy-compatible alchemy_getAssetTransfers
+
+## AI and third-party code disclosure
+
+OpenAI Codex was used as an AI coding assistant for implementation support, interface iteration, debugging, and documentation. The project uses the third-party dependencies listed above and in package.json, including OpenZeppelin Contracts. This prototype has not had an independent security audit.
 
 ## Local setup
 
