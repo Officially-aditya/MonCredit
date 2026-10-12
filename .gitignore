@@ -11,3 +11,5 @@ coverage/
 .DS_Store
 .turbo/
 *.tsbuildinfo
+.vercel
+.env*
